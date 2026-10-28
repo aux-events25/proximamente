@@ -16,7 +16,7 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:Nunit
 
 /* Piso del escenario */
 #piso{position:absolute;left:0;bottom:0;width:100%;height:var(--ph);z-index:7;display:block}
-#caravana{position:absolute;left:0;top:0;width:var(--cv);height:auto;z-index:8;will-change:transform;visibility:hidden}
+#caravana{position:absolute;left:0;top:0;width:var(--cv);height:auto;z-index:10;will-change:transform;visibility:hidden}
 
 /* Escenario: dos copias, una en silueta y otra iluminada */
 .escenario{position:absolute;left:50%;top:var(--top);width:var(--w);height:var(--h);transform:translateX(-50%)}
@@ -33,14 +33,14 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:Nunit
 #haz{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;mix-blend-mode:screen}
 
 /* Telón */
-.cortina{position:absolute;top:0;height:calc(100% - var(--ph) * .42);width:calc(var(--cw) + 10vw);z-index:9;overflow:visible}
-.cortina.izq{left:-10vw;transform-origin:0 0;animation:viento 6.5s ease-in-out infinite}
-.cortina.der{right:-10vw;transform-origin:50% 0;transform:scaleX(-1);animation:vientoDer 7.3s ease-in-out infinite}
+.cortina{position:absolute;top:0;height:calc(100% - var(--ph) * .97);z-index:9;overflow:visible}
+.cortina.izq{left:-10vw;width:calc(var(--cwI) + 10vw);transform-origin:0 0;animation:viento 6.5s ease-in-out infinite}
+.cortina.der{right:-10vw;width:calc(var(--cwD) + 10vw);transform-origin:50% 0;transform:scaleX(-1);animation:vientoDer 7.3s ease-in-out infinite}
 @keyframes viento{0%,100%{transform:skewX(0) scaleX(1)}30%{transform:skewX(2.2deg) scaleX(1.04)}60%{transform:skewX(-1.4deg) scaleX(.97)}}
 @keyframes vientoDer{0%,100%{transform:scaleX(-1) skewX(0)}35%{transform:scaleX(-1.03) skewX(-2.4deg)}70%{transform:scaleX(-.97) skewX(1.6deg)}}
 .pl{animation:ondea 3.4s ease-in-out infinite}
 @keyframes ondea{0%,100%{transform:translateX(0)}50%{transform:translateX(6px)}}
-.orilla{position:absolute;top:0;bottom:calc(var(--ph) * .42);width:calc(var(--cw) * .6);z-index:8;background:linear-gradient(90deg,#3d020c,#6e0718)}
+.orilla{position:absolute;top:0;bottom:calc(var(--ph) * .97);width:calc(var(--cw) * .6);z-index:8;background:linear-gradient(90deg,#3d020c,#6e0718)}
 .orilla.izq{left:0}.orilla.der{right:0;transform:scaleX(-1)}
 #marquesina{position:absolute;left:50%;top:calc(var(--bh) * .84);width:min(30vw,200px);z-index:11;transform-origin:50% 0;
   transform:translateX(-50%) translateY(-50%);animation:mqMece 6s ease-in-out infinite;filter:drop-shadow(0 10px 18px rgba(0,0,0,.55))}
@@ -430,16 +430,31 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:Nunit
   <button id="sonido" type="button" aria-pressed="false"><span class="ico">🔔</span><span class="txt">Toca para activar el sonido</span></button>
 </div>
 <script>
+// ====== APERTURA DEL TELÓN ======
+// Automática: con 31 días o más el telón está casi cerrado y se va abriendo solo cada día hasta el 27 de noviembre.
+// Si quieres fijarla a mano, cambia null por un número de 0 (cerrado como ahora) a 100 (abierto del todo).
+var APERTURA_MANUAL = null;
+var DIAS_TOTALES = 31;
+var DIAS=(function(){
+  var p=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Monterrey',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()).split('-');
+  var q=new URLSearchParams(location.search).get('dias');
+  return q!==null?parseInt(q,10):Math.round((Date.UTC(2026,10,27)-Date.UTC(+p[0],+p[1]-1,+p[2]))/86400000);
+})();
 var raiz=document.documentElement.style, luz=document.getElementById('luz'), sombra=document.getElementById('sombra'), haz=document.getElementById('haz');
 var L=[{lamp:document.getElementById('lampIzq'),cono:document.getElementById('cono1'),charco:document.getElementById('charco1'),fx:0.2,vel:0.47,fase:0,vy:0.33},
        {lamp:document.getElementById('lampDer'),cono:document.getElementById('cono2'),charco:document.getElementById('charco2'),fx:0.8,vel:0.39,fase:2.1,vy:0.28}];
 function medidas(){
   var W=innerWidth,H=innerHeight,bh=Math.max(70,Math.min(H*0.13,150));
-  var ph=Math.max(70,H*0.15), disp=H-bh-ph, w=Math.min(W*(W<700?0.92:0.6), disp*0.86), h=w/0.8;
+  var ph=Math.max(90,H*0.22), disp=H-bh-ph, w=Math.min(W*(W<700?0.92:0.6), disp*0.86), h=w/0.8;
   raiz.setProperty('--ph',ph+'px');
   raiz.setProperty('--w',w+'px');raiz.setProperty('--h',h+'px');raiz.setProperty('--bh',bh+'px');
   raiz.setProperty('--top',(H-ph-h*0.9)+'px');
-  var cw=W<700? W*0.19 : W*0.28; raiz.setProperty('--cw',cw+'px');
+  var cw=W<700? W*0.19 : W*0.28;
+  // cerrado: el telón izquierdo llega hasta "¡AL / CONS" y el derecho cubre "TÁ / NDO!"
+  var izqCerrado=(W-w)/2+0.35*w, derCerrado=(W-w)/2+(1-0.655)*w;
+  var ap=APERTURA_MANUAL!==null? APERTURA_MANUAL/100 : Math.max(0,Math.min(1,(DIAS_TOTALES-DIAS)/DIAS_TOTALES));
+  var cwI=izqCerrado+(cw-izqCerrado)*ap, cwD=derCerrado+(cw-derCerrado)*ap;
+  raiz.setProperty('--cwI',cwI+'px'); raiz.setProperty('--cwD',cwD+'px'); raiz.setProperty('--cw',Math.min(cwI,cwD)+'px');
   var cv=Math.min((W-2*cw)*(W<700?0.86:0.5), 430); raiz.setProperty('--cv',cv+'px'); CV={cv:cv,ch:cv*450/580,ph:ph};
   raiz.setProperty('--lw',Math.max(44,Math.min(W*0.07,76))+'px');
   haz.setAttribute('viewBox','0 0 '+W+' '+H);
@@ -559,7 +574,7 @@ var ultimoPaso=0, tAnt=0;
 var INVITADOS=["Maryjo", "Rodrigo", "Fer", "Diego", "Ximi", "Edgar", "Pollo", "Pau", "Dani", "Lupita", "Reginita", "Constanza", "Tía Chaly", "Tío Javi", "Javi", "Pato", "Vale", "Barbie", "Pablo"];
 function dibujarButacas(){
   var W=innerWidth,H=innerHeight,viejo=document.getElementById('butacas'); if(viejo) viejo.remove();
-  var filas=[{n:7,y:0.895,esc:0.80},{n:6,y:0.935,esc:0.86},{n:6,y:0.972,esc:1.0}];
+  var filas=[{n:7,y:0.852,esc:0.80},{n:6,y:0.892,esc:0.86},{n:6,y:0.932,esc:1.0}];
   var s='<svg id="butacas" aria-hidden="true" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'">'+
     '<defs><linearGradient id="bu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b2b2e"/><stop offset=".5" stop-color="#151517"/><stop offset="1" stop-color="#070708"/></linearGradient>'+
     '<linearGradient id="bl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".10"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>';
