@@ -1600,13 +1600,17 @@ function resultado(o,desde){
   verEscena(tipo==='ok'||tipo==='repetido'?tipo:'normal');
   poner('<div class="estado grande '+tipo+'" role="status">'+(tipo==='ok'?'<span class="timbre" aria-hidden="true">🎄</span>':'')+
     '<div class="ico">'+(ICONOS[tipo]||'⭐')+'</div><div><div class="t">'+esc(o.titulo||'Algo salió mal')+'</div>'+(o.sub?'<div class="s">'+esc(o.sub)+'</div>':'')+'</div></div>'+
-    '<button class="boton" id="apVer" type="button">⭐ Ver mis puntos</button>'+
-    '<button class="boton secundario" id="apOtro" type="button">📷 Escanear otro código</button>');
+    (tipo==='terminado'
+      ? '<button class="boton" id="apVer" type="button">🏠 Volver a mi menú</button><p class="nota" id="apCuenta">Regresas a tu menú en 20 segundos…</p>'
+      : '<button class="boton" id="apVer" type="button">⭐ Ver mis puntos</button><button class="boton secundario" id="apOtro" type="button">📷 Escanear otro código</button>'));
   if(tipo==='ok') confeti();
   var listo=false, ir=function(){ if(listo||vista!=='resultado') return; listo=true;
     inicio({aviso:tipo==='ok'?AVISOS.ok+': '+String(o.titulo||'').replace(/[¡!]/g,''):AVISOS[tipo], desde:tipo==='ok'?desde:null}); };
-  $('apVer').onclick=ir; $('apOtro').onclick=function(){ listo=true; escaner(); };
-  setTimeout(ir,6000);
+  $('apVer').onclick=ir;
+  if(tipo==='terminado'){
+    var q=20, t=setInterval(function(){ q--; var c=$('apCuenta'); if(!c||listo){clearInterval(t);return;}
+      c.textContent='Regresas a tu menú en '+q+' segundo'+(q===1?'':'s')+'…'; if(q<=0){ clearInterval(t); ir(); } },1000);
+  } else { $('apOtro').onclick=function(){ listo=true; escaner(); }; setTimeout(ir,6000); }
 }
 
 /* ---------- Mural (cabina de fotos) ---------- */
