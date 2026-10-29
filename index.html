@@ -344,6 +344,25 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:Nunit
   border:2px solid #f2c14e;background:rgba(42,2,10,.85);color:#fff3c4;font:900 20px Nunito,sans-serif;cursor:pointer;opacity:.8}
 #refrescarTelon:focus-visible{outline:3px solid #fff3c4;outline-offset:3px}
 #appPosada .tarjeta{margin-top:0}
+
+.ap-avatarbtn{position:relative;flex:none;width:84px;height:84px;padding:0;border:0;border-radius:50%;cursor:pointer;background:none;box-shadow:0 6px 14px -6px rgba(0,0,0,.5)}
+.ap-avatarbtn .ap-av{width:100%;height:100%;display:block;border-radius:50%;border:3px solid #f2c14e}
+.ap-lapiz{position:absolute;right:-4px;bottom:-2px;width:30px;height:30px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:15px;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.ap-avatarbtn:focus-visible{outline:3px solid #c8102e;outline-offset:4px}
+.ap-tipav{font-size:12px;font-weight:800;color:#1f7a4d;margin-top:2px}
+.ap-avedit{padding-top:22px}
+.ap-avprev{width:170px;height:170px;margin:0 auto 6px}
+.ap-avprev .ap-av{width:100%;height:100%;border-radius:50%;border:5px solid #f2c14e;box-shadow:0 10px 24px -10px rgba(0,0,0,.5)}
+.ap-avgrupo h3{margin:14px 0 8px;font:900 16px Nunito,sans-serif;color:#c8102e}
+.ap-avops{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 8px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.ap-avop{flex:none;width:76px;border:2px solid #ecdcd3;background:#fff;border-radius:16px;padding:6px 4px;cursor:pointer;scroll-snap-align:start;font:800 12px Nunito,sans-serif;color:#6e5f61}
+.ap-avop .ap-av{width:56px;height:56px;display:block;margin:0 auto 4px;border-radius:50%}
+.ap-avop.sel{border-color:#c8102e;background:#fff3e0;color:#c8102e;box-shadow:0 0 0 2px #c8102e inset}
+.ap-avop:focus-visible{outline:3px solid #f2c14e;outline-offset:2px}
+
+.ap-fin{margin:0 0 12px;text-align:center;background:#c8102e;border:2px solid #f2c14e;border-radius:16px;padding:12px 14px;box-shadow:0 10px 20px -10px rgba(0,0,0,.6)}
+.ap-fin b{display:block;font-family:"Luckiest Guy",sans-serif;font-weight:400;font-size:24px;letter-spacing:.02em;color:#fff}
+.ap-fin span{display:block;font-weight:800;color:#ffe08a;margin-top:2px}
 </style>
 </head>
 <body>
@@ -1227,7 +1246,7 @@ requestAnimationFrame(cuadro);
    Prueba sin encenderla: agrega ?app=1 al link (y ?app=0 para ver el telón). */
 (function(){
 var API='https://script.google.com/macros/s/AKfycbz3BdSkfxvH9OzpXBI4hdP0D5GQu6DWrOJOsajLLxBc3F9gvqqaVgL_Pq5Nra9zPg1s/exec';
-var modoListo=false, LLAVE='posada_jugador', activa=false, datos=null, vista='', F={qr:false,mural:false,premios:false};
+var modoListo=false, LLAVE='posada_jugador', activa=false, datos=null, vista='', F={qr:false,mural:false,premios:false,terminado:false};
 var forzar=new URLSearchParams(location.search).get('app');
 var GORRO='<svg viewBox="0 0 120 80" aria-hidden="true"><path d="M10 62 C16 26 52 4 88 8 C108 11 118 26 116 46 L102 50 C98 36 90 30 80 31 C90 44 96 54 98 62 Z" fill="#c8102e"/><rect x="2" y="56" width="100" height="22" rx="11" fill="#fff"/><circle cx="110" cy="48" r="11" fill="#fff"/></svg>';
 function $(i){return document.getElementById(i);}
@@ -1368,6 +1387,87 @@ function confirmar(apodo,cands){
   $('apNo').onclick=function(){ registro('El apodo "'+apodo+'" ya está ocupado. Elige otro.'); };
 }
 
+/* ---------- Avatar personalizable ---------- */
+var AV_OPC={
+  p:[['elfo','Duende'],['santa','Santa'],['reno','Reno'],['muneco','Muñeco'],['pinguino','Pingüino'],['galleta','Galleta']],
+  g:[['ninguno','Sin gorro'],['santa','Santa'],['elfo','Duende'],['tejido','Tejido'],['corona','Corona'],['diadema','Astas']],
+  l:[['ninguno','Sin lentes'],['redondos','Redondos'],['estrella','Estrella'],['corazon','Corazón'],['sol','De sol']],
+  a:[['ninguno','Nada'],['bufanda','Bufanda'],['mono','Moño'],['luces','Luces'],['cascabel','Cascabel']],
+  f:[['verde','Pino'],['rojo','Rojo'],['dorado','Dorado'],['azul','Noche'],['nieve','Nieve']]};
+var AV_TIT={p:'Personaje',g:'Gorro navideño',l:'Lentes',a:'Accesorio',f:'Fondo'};
+var AV_FONDO={verde:['#2f9e62','#1f7a4d'],rojo:['#e02a45','#9a0b22'],dorado:['#f7d774','#d9a53a'],azul:['#3b5ba5','#1d2f5e'],nieve:['#e8f3fa','#b9d4e6']};
+function avDef(){ return {p:'elfo',g:'santa',l:'ninguno',a:'bufanda',f:'verde'}; }
+function avLeer(){ try{ var o=JSON.parse(localStorage.getItem('posada_avatar')||'null'); if(o&&o.p) return Object.assign(avDef(),o); }catch(e){} return avDef(); }
+function avGuardar(o){ try{ localStorage.setItem('posada_avatar',JSON.stringify(o)); }catch(e){} }
+var avN=0;
+function avatarSVG(c){
+  var id='av'+(++avN), F=AV_FONDO[c.f]||AV_FONDO.verde, s='';
+  s+='<svg viewBox="0 0 120 120" class="ap-av" aria-hidden="true"><defs><radialGradient id="'+id+'g" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="'+F[0]+'"/><stop offset="1" stop-color="'+F[1]+'"/></radialGradient>'+
+     '<clipPath id="'+id+'c"><circle cx="60" cy="60" r="58"/></clipPath></defs><g clip-path="url(#'+id+'c)"><rect width="120" height="120" fill="url(#'+id+'g)"/>';
+  var piel={elfo:'#f6c9a8',santa:'#f6c9a8',reno:'#a86b3c',muneco:'#ffffff',pinguino:'#1f2a36',galleta:'#c47a3e'}[c.p]||'#f6c9a8';
+  // detrás de la cabeza
+  if(c.p==='reno'&&c.g!=='diadema') s+='<path d="M44 44 L36 20 M38 28 L28 24 M37 24 L40 12 M76 44 L84 20 M82 28 L92 24 M83 24 L80 12" stroke="#7d4a25" stroke-width="5" stroke-linecap="round" fill="none"/>';
+  if(c.p==='elfo') s+='<path d="M33 64 L12 48 L34 78Z M87 64 L108 48 L86 78Z" fill="'+piel+'"/><path d="M30 64 L19 54 L31 72Z M90 64 L101 54 L89 72Z" fill="#f2a98a"/>';
+  if(c.p==='reno') s+='<ellipse cx="30" cy="58" rx="11" ry="6" fill="#8a5530" transform="rotate(-30 30 58)"/><ellipse cx="90" cy="58" rx="11" ry="6" fill="#8a5530" transform="rotate(30 90 58)"/>';
+  // cabeza
+  s+='<circle cx="60" cy="68" r="30" fill="'+piel+'"'+(c.p==='muneco'?' stroke="#cfe0ec" stroke-width="2"':'')+'/>';
+  if(c.p==='pinguino') s+='<circle cx="51" cy="72" r="16" fill="#fff"/><circle cx="69" cy="72" r="16" fill="#fff"/>';
+  if(c.p==='reno') s+='<ellipse cx="60" cy="82" rx="16" ry="11" fill="#d9a07a"/>';
+  // cara
+  s+='<circle cx="50" cy="66" r="3.4" fill="#2a1d1f"/><circle cx="70" cy="66" r="3.4" fill="#2a1d1f"/><circle cx="51" cy="65" r="1" fill="#fff"/><circle cx="71" cy="65" r="1" fill="#fff"/>';
+  if(c.p!=='pinguino'&&c.p!=='muneco') s+='<circle cx="43" cy="76" r="5" fill="#f4a3a0" opacity=".6"/><circle cx="77" cy="76" r="5" fill="#f4a3a0" opacity=".6"/>';
+  if(c.p==='pinguino') s+='<path d="M54 76 L66 76 L60 84Z" fill="#f28c28"/><circle cx="44" cy="78" r="4" fill="#f4a3a0" opacity=".6"/><circle cx="76" cy="78" r="4" fill="#f4a3a0" opacity=".6"/>';
+  else if(c.p==='muneco') s+='<path d="M59 72 L80 76 L59 78Z" fill="#f28c28"/><g fill="#2a1d1f"><circle cx="50" cy="84" r="1.8"/><circle cx="55" cy="87" r="1.8"/><circle cx="60" cy="88" r="1.8"/><circle cx="65" cy="87" r="1.8"/><circle cx="70" cy="84" r="1.8"/></g>';
+  else if(c.p==='reno') s+='<path d="M54 86 Q60 91 66 86" stroke="#5e3519" stroke-width="2.4" fill="none" stroke-linecap="round"/><circle cx="60" cy="77" r="6.5" fill="#e02a45"/><circle cx="58" cy="75" r="2" fill="#fff" opacity=".7"/>';
+  else if(c.p==='santa') s+='<path d="M32 72 Q33 106 60 110 Q87 106 88 72 Q80 88 60 88 Q40 88 32 72Z" fill="#fff"/><ellipse cx="53" cy="81" rx="8" ry="4.5" fill="#fff"/><ellipse cx="67" cy="81" rx="8" ry="4.5" fill="#fff"/><circle cx="60" cy="76" r="3.6" fill="#e88f7a"/><path d="M45 59 Q50 56 55 59 M65 59 Q70 56 75 59" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none"/>';
+  else if(c.p==='galleta') s+='<path d="M51 80 Q60 88 69 80" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M38 60 q3 -3 6 0 q3 3 6 0 M70 60 q3 -3 6 0 q3 3 6 0" stroke="#fff" stroke-width="2" fill="none"/><circle cx="60" cy="74" r="2" fill="#8a4a1f"/>';
+  else s+='<path d="M52 80 Q60 87 68 80" stroke="#7a2b2b" stroke-width="2.6" fill="none" stroke-linecap="round"/><circle cx="60" cy="74" r="2.4" fill="#e88f7a"/>';
+  // accesorio
+  if(c.a==='bufanda') s+='<rect x="32" y="94" width="56" height="13" rx="6.5" fill="#c8102e"/><path d="M40 94 v13 M50 94 v13 M60 94 v13 M70 94 v13 M80 94 v13" stroke="#fff" stroke-width="2.5" opacity=".85"/><rect x="66" y="100" width="11" height="22" rx="4" fill="#c8102e"/><path d="M66 108 h11 M66 114 h11" stroke="#fff" stroke-width="2.5"/>';
+  else if(c.a==='mono') s+='<path d="M60 102 L44 94 L44 110Z M60 102 L76 94 L76 110Z" fill="#c8102e"/><circle cx="60" cy="102" r="4.5" fill="#9a0b22"/>';
+  else if(c.a==='luces') s+='<path d="M26 98 Q60 116 94 98" stroke="#1f7a4d" stroke-width="2.5" fill="none"/>'+[[34,103,'#f2c14e'],[46,108,'#e02a45'],[60,110,'#7fd3ff'],[74,108,'#2f9e62'],[86,103,'#f2c14e']].map(function(b){return '<ellipse cx="'+b[0]+'" cy="'+(b[1]+5)+'" rx="3.4" ry="5" fill="'+b[2]+'"/>';}).join('');
+  else if(c.a==='cascabel') s+='<path d="M34 98 Q60 108 86 98" stroke="#c8102e" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="60" cy="108" r="7" fill="#f2c14e" stroke="#c9952e" stroke-width="1.5"/><path d="M55 109 h10" stroke="#9c7420" stroke-width="1.5"/><circle cx="58" cy="105" r="1.6" fill="#fff" opacity=".8"/>';
+  // lentes
+  if(c.l==='redondos') s+='<g fill="rgba(255,255,255,.25)" stroke="#2a1d1f" stroke-width="2.6"><circle cx="50" cy="66" r="8.5"/><circle cx="70" cy="66" r="8.5"/></g><path d="M58.5 66 h3" stroke="#2a1d1f" stroke-width="2.6"/>';
+  else if(c.l==='sol') s+='<rect x="39" y="60" width="20" height="13" rx="5" fill="#111"/><rect x="61" y="60" width="20" height="13" rx="5" fill="#111"/><path d="M59 64 h2" stroke="#111" stroke-width="3"/><path d="M42 63 l5 0" stroke="#fff" stroke-width="1.5" opacity=".6"/>';
+  else if(c.l==='estrella'){ var st=function(x,y){var p='',i;for(i=0;i<10;i++){var r=i%2?5:11,a=Math.PI/5*i-Math.PI/2;p+=(x+r*Math.cos(a)).toFixed(1)+','+(y+r*Math.sin(a)).toFixed(1)+' ';}return '<polygon points="'+p+'" fill="rgba(242,193,78,.55)" stroke="#d9a53a" stroke-width="2"/>';}; s+=st(49,66)+st(71,66)+'<path d="M58 66 h4" stroke="#d9a53a" stroke-width="2.5"/>'; }
+  else if(c.l==='corazon'){ var hz=function(x,y){return '<path d="M'+x+' '+(y+8)+' C'+(x-13)+' '+(y-1)+' '+(x-7)+' '+(y-10)+' '+x+' '+(y-4)+' C'+(x+7)+' '+(y-10)+' '+(x+13)+' '+(y-1)+' '+x+' '+(y+8)+'Z" fill="rgba(232,40,63,.55)" stroke="#c8102e" stroke-width="2"/>';}; s+=hz(49,66)+hz(71,66)+'<path d="M58 64 h4" stroke="#c8102e" stroke-width="2.5"/>'; }
+  // gorro
+  if(c.g==='santa') s+='<path d="M28 48 Q32 14 66 16 Q94 18 98 44 L86 48 Q82 32 70 31 Q78 40 82 48Z" fill="#c8102e"/><rect x="25" y="42" width="66" height="13" rx="6.5" fill="#fff"/><circle cx="96" cy="46" r="7.5" fill="#fff"/>';
+  else if(c.g==='elfo') s+='<path d="M28 48 Q48 2 98 8 Q74 20 90 48Z" fill="#2f9e62"/><path d="M28 48 Q48 2 98 8" stroke="#1f7a4d" stroke-width="2" fill="none"/><rect x="25" y="43" width="68" height="10" rx="5" fill="#c8102e"/><circle cx="98" cy="9" r="5.5" fill="#f2c14e"/>';
+  else if(c.g==='tejido') s+='<path d="M29 52 Q29 18 60 18 Q91 18 91 52Z" fill="#c8102e"/><path d="M31 38 H89 M33 30 H87" stroke="#fff" stroke-width="3.5" opacity=".9"/><rect x="27" y="46" width="66" height="11" rx="5.5" fill="#fff"/><path d="M33 46 v11 M41 46 v11 M49 46 v11 M57 46 v11 M65 46 v11 M73 46 v11 M81 46 v11 M89 46 v11" stroke="#e3e3e3" stroke-width="1.5"/><circle cx="60" cy="16" r="8" fill="#fff"/>';
+  else if(c.g==='corona') s+='<path d="M34 50 L34 24 L47 37 L60 17 L73 37 L86 24 L86 50Z" fill="#f2c14e" stroke="#c9952e" stroke-width="2" stroke-linejoin="round"/><circle cx="60" cy="40" r="4.2" fill="#c8102e"/><circle cx="45" cy="44" r="3" fill="#2f9e62"/><circle cx="75" cy="44" r="3" fill="#2f9e62"/>';
+  else if(c.g==='diadema') s+='<path d="M30 50 Q60 28 90 50" stroke="#7d4a25" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M40 42 L32 20 M35 28 L25 25 M80 42 L88 20 M85 28 L95 25" stroke="#a86b3c" stroke-width="5" stroke-linecap="round" fill="none"/><circle cx="46" cy="38" r="3" fill="#2f9e62"/><circle cx="74" cy="38" r="3" fill="#c8102e"/>';
+  return s+'</g></svg>';
+}
+var avEdit=null;
+function editorAvatar(){
+  vista='avatar'; verEscena(''); avEdit=avLeer();
+  poner(volver()+'<h2 class="ap-titsec">Mi avatar</h2>'+
+    '<section class="tarjeta ap-avedit"><div class="ap-avprev" id="apAvPrev">'+avatarSVG(avEdit)+'</div>'+
+    '<div id="apAvGrupos"></div>'+
+    '<button class="boton" id="apAvOk" type="button">✅ Guardar mi avatar</button>'+
+    '<button class="boton secundario" id="apAvAzar" type="button">🎲 Sorpréndeme</button></section>');
+  pintarGrupos();
+  $('apVolver').onclick=function(){ inicio({}); };
+  $('apAvOk').onclick=function(){ avGuardar(avEdit); aviso('¡Listo! Tu avatar quedó guardado 🎄'); inicio({}); };
+  $('apAvAzar').onclick=function(){ Object.keys(AV_OPC).forEach(function(k){ var o=AV_OPC[k]; avEdit[k]=o[Math.floor(Math.random()*o.length)][0]; }); pintarGrupos(); };
+}
+function pintarGrupos(){
+  $('apAvPrev').innerHTML=avatarSVG(avEdit);
+  $('apAvGrupos').innerHTML=Object.keys(AV_OPC).map(function(k){
+    return '<div class="ap-avgrupo"><h3>'+AV_TIT[k]+'</h3><div class="ap-avops" role="radiogroup" aria-label="'+AV_TIT[k]+'">'+AV_OPC[k].map(function(o){
+      var prueba=Object.assign({},avEdit); prueba[k]=o[0]; var sel=avEdit[k]===o[0];
+      return '<button type="button" class="ap-avop'+(sel?' sel':'')+'" role="radio" aria-checked="'+sel+'" data-k="'+k+'" data-v="'+o[0]+'">'+avatarSVG(prueba)+'<span>'+o[1]+'</span></button>';
+    }).join('')+'</div></div>';
+  }).join('');
+  $('apAvGrupos').querySelectorAll('.ap-avop').forEach(function(b){ b.onclick=function(){
+    var g=b.parentNode, x=g.scrollLeft; avEdit[b.getAttribute('data-k')]=b.getAttribute('data-v');
+    var pos={}; document.querySelectorAll('.ap-avops').forEach(function(r,i){pos[i]=r.scrollLeft;});
+    pintarGrupos(); document.querySelectorAll('.ap-avops').forEach(function(r,i){r.scrollLeft=pos[i]||0;});
+  }; });
+}
+
 /* ---------- Inicio (menú) ---------- */
 var QR_ICONO='<svg viewBox="0 0 29 29" aria-hidden="true"><path fill="#fff" d="M0 0h9v9H0zM2 2v5h5V2zM3 3h3v3H3zM20 0h9v9h-9zM22 2v5h5V2zM23 3h3v3h-3zM0 20h9v9H0zM2 22v5h5v-5zM3 23h3v3H3zM11 0h2v2h-2zM14 1h2v3h-2zM11 4h2v3h-2zM16 5h2v2h-2zM12 9h3v2h-3zM17 9h2v4h-2zM0 11h3v2H0zM5 11h4v2H5zM10 12h2v3h-2zM13 13h3v2h-3zM20 11h3v2h-3zM25 11h4v2h-4zM1 15h4v2H1zM7 15h2v3H7zM18 15h3v2h-3zM23 15h2v4h-2zM27 15h2v3h-2zM11 17h4v2h-4zM16 18h2v3h-2zM20 19h2v2h-2zM11 21h2v2h-2zM14 22h3v2h-3zM20 22h3v3h-3zM25 21h4v2h-4zM11 25h4v2h-4zM17 26h3v3h-3zM24 25h2v4h-2zM27 26h2v3h-2z"/></svg>';
 var TILES=[
@@ -1380,9 +1480,10 @@ var TILES=[
 function inicio(op){
   op=op||{}; vista='inicio'; detenerCamara(); verEscena('normal');
   var d=datos||{};
-  poner((op.aviso?'<p class="ap-ultimo">'+esc(op.aviso)+'</p>':'')+
-    '<section class="tarjeta"><div class="ap-jugador"><div class="ap-avatar">'+GORRO+esc(iniciales(d.nombre))+'</div>'+
-    '<div><div class="ap-hola">¡Feliz Navidad,</div><div class="ap-nombre">'+esc(d.nombre)+'!</div><div class="ap-id">Tu ID: '+esc(d.id||'')+'</div></div></div>'+
+  poner((F.terminado?'<div class="ap-fin" role="status"><b>🔔 ¡La posada terminó!</b><span>Ya no puedes sumar más puntos. ¡Úsalos en la subasta!</span></div>':'')+
+    (op.aviso?'<p class="ap-ultimo">'+esc(op.aviso)+'</p>':'')+
+    '<section class="tarjeta"><div class="ap-jugador"><button class="ap-avatarbtn" id="apAvatar" type="button" aria-label="Personalizar mi avatar">'+avatarSVG(avLeer())+'<span class="ap-lapiz" aria-hidden="true">✏️</span></button>'+
+    '<div><div class="ap-hola">¡Feliz Navidad,</div><div class="ap-nombre">'+esc(d.nombre)+'!</div><div class="ap-id">Tu ID: '+esc(d.id||'')+'</div><div class="ap-tipav">Toca tu avatar para personalizarlo</div></div></div>'+
     '<div class="ap-puntos"><b id="apPts">'+fmt(d.total)+'</b><span>puntos disponibles</span></div>'+
     '<p class="ap-mini" id="apMini">'+mini(d)+'</p><div id="apBono"></div></section>'+
     '<nav class="ap-menu" aria-label="Menú de la posada">'+TILES.map(function(t){
@@ -1391,6 +1492,7 @@ function inicio(op){
         '<span class="ap-cerrado" aria-hidden="true"><i class="ap-pista">'+t.pista+'</i><span><b>'+t.frase+'</b><small>🔒 Se desbloquea durante la posada</small></span></span></button>';
     }).join('')+'</nav><p class="ap-pie">Deja esta app abierta toda la noche 🎄</p>');
   document.querySelectorAll('.ap-tile').forEach(function(b){ b.onclick=function(){ abrir(b.getAttribute('data-s')); }; });
+  $('apAvatar').onclick=editorAvatar;
   if(op.desde!=null) contador($('apPts'),Number(op.desde),Number(d.total||0));
   if(op.bono>0){ $('apBono').innerHTML='<div class="ap-bono">🎉 ¡+'+fmt(op.bono)+' puntos de bienvenida!</div>'; confeti(); }
   if(op.premio) $('apBono').innerHTML='<div class="ap-bono">🎁 ¡Ganaste <b>'+esc(op.premio)+'</b> en la subasta! Revisa tus premios.</div>';
@@ -1479,8 +1581,8 @@ function leido(txt){
   if(navigator.vibrate) try{navigator.vibrate(60);}catch(e){}
   procesar(c);
 }
-var ICONOS={ok:'🎁',repetido:'⛄',expirado:'⏰',agotado:'🦌',invalido:'❓',error:'⚠️'};
-var AVISOS={ok:'Último código',repetido:'Ese QR ya lo tenías',expirado:'Ese código ya cerró',agotado:'Ese código ya se agotó',invalido:'Ese código no es válido para la dinámica'};
+var ICONOS={ok:'🎁',repetido:'⛄',expirado:'⏰',agotado:'🦌',invalido:'❓',error:'⚠️',terminado:'🔔'};
+var AVISOS={ok:'Último código',repetido:'Ese QR ya lo tenías',expirado:'Ese código ya cerró',agotado:'Ese código ya se agotó',invalido:'Ese código no es válido para la dinámica',terminado:'La posada terminó: usa tus puntos en la subasta'};
 function procesar(codigo){
   detenerCamara(); vista='revisando'; verEscena('leyendo');
   poner('<div class="revisando" role="status"><div class="t">Santa está revisando el QR…</div><div class="puntitos" aria-hidden="true"><i></i><i></i><i></i></div></div>');
@@ -1566,8 +1668,9 @@ function revisarModo(){
     if(!activa){ if(o.app) mostrarApp(o); return; }
     if(o.app===false&&forzar!=='1'){ location.reload(); return; }
     var nuevos=['qr','mural','premios'].filter(function(k){return !!o[k]&&!F[k];});
-    var cambio=['qr','mural','premios'].some(function(k){return !!o[k]!==F[k];});
-    F={qr:!!o.qr,mural:!!o.mural,premios:!!o.premios};
+    var cambio=['qr','mural','premios'].some(function(k){return !!o[k]!==F[k];}), finCambio=!!o.terminado!==F.terminado;
+    F={qr:!!o.qr,mural:!!o.mural,premios:!!o.premios,terminado:!!o.terminado};
+    if(finCambio&&vista==='inicio'){ inicio({}); return; }
     if(cambio) pintarTiles(nuevos);
     if(modoListo&&datos&&datos.nombre) nuevos.forEach(notificar);
     modoListo=true;
@@ -1577,7 +1680,7 @@ function revisarModo(){
 /* ---------- Encender / apagar la app ---------- */
 function mostrarApp(m){
   if(activa) return; activa=true;
-  if(m){ F={qr:!!m.qr,mural:!!m.mural,premios:!!m.premios}; modoListo=true; }
+  if(m){ F={qr:!!m.qr,mural:!!m.mural,premios:!!m.premios,terminado:!!m.terminado}; modoListo=true; }
   try{ if(window.apagarSonidoTelon) window.apagarSonidoTelon(); }catch(e){}
   window.__appActiva=true;
   ['teatro','sonido','refrescarTelon'].forEach(function(id){var el=$(id); if(el) el.style.display='none';});
