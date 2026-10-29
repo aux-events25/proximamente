@@ -15,7 +15,7 @@
 <meta property="og:title" content="¡Algo se está construyendo!">
 <meta property="og:description" content="Posada Navideña · 27 de noviembre">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Mountains+of+Christmas:wght@700&family=Saira+Condensed:wght@700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:Nunito,system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
@@ -132,6 +132,147 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:Nunit
 .ap-conf{position:fixed;top:-20px;z-index:310;pointer-events:none;animation:apCae linear forwards}
 @keyframes apCae{to{transform:translateY(110vh) rotate(720deg)}}
 @media (prefers-reduced-motion:reduce){#appPosada *{animation:none !important}}
+
+/* ===== Estilos de la pantalla de registro del juego (posadagomez) ===== */
+#appPosada{
+  --pino:#0c3b29; --pino2:#0f4d32; --hoja:#2f9e62; --hoja2:#1f7a4d;
+  --rojo:#c8102e; --rojo2:#9a0b22; --oro:#f2c14e; --nieve:#fffaf3; --tinta:#2a1d1f; --suave:#6e5f61;
+}
+#appPosada *{box-sizing:border-box}
+#appPosada #nieve{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+#appPosada .copo{position:absolute;top:-12px;color:#fff;opacity:.85;animation:g_nevar linear infinite}
+@keyframes g_nevar{to{transform:translate(var(--dx),105vh) rotate(360deg)}}
+#appPosada .esferas{display:block;width:100%;max-width:480px;height:auto;margin:0 auto;position:relative;z-index:2}
+#appPosada .esfera{transform-box:view-box;animation:g_columpio 3.6s ease-in-out infinite}
+@keyframes g_columpio{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+#appPosada .hoja{max-width:440px;margin:0 auto;padding:0 18px;position:relative;z-index:2}
+#appPosada .escena{display:block;width:100%;height:auto;margin:-18px 0 0}
+#appPosada .arbol{transform-box:view-box;transform-origin:180px 216px;animation:g_crecer 1.1s cubic-bezier(.2,1.3,.4,1) both}
+@keyframes g_crecer{from{transform:scale(.1);opacity:0}to{transform:scale(1);opacity:1}}
+#appPosada .estrella{transform-box:view-box;transform-origin:180px 46px;
+  animation:g_aparece .5s 1s cubic-bezier(.2,1.6,.4,1) both,g_brilla 1.8s 1.5s ease-in-out infinite}
+@keyframes g_aparece{from{transform:scale(0)}to{transform:scale(1)}}
+@keyframes g_brilla{0%,100%{transform:scale(1);filter:drop-shadow(0 0 3px #f2c14e)}50%{transform:scale(1.15);filter:drop-shadow(0 0 10px #ffe08a)}}
+#appPosada .luz{animation:g_parpadeo 1.2s ease-in-out infinite}
+@keyframes g_parpadeo{0%,100%{opacity:1}50%{opacity:.25}}
+#appPosada .santa{animation:g_llega-der .9s .5s cubic-bezier(.2,1.2,.4,1) both}
+#appPosada .santa-cuerpo{animation:g_rebote 1.6s 1.4s ease-in-out infinite}
+@keyframes g_llega-der{from{transform:translateX(140px);opacity:0}to{transform:none;opacity:1}}
+@keyframes g_rebote{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+#appPosada .mano{transform-box:view-box;transform-origin:309px 160px;animation:g_saludo .7s 1.4s ease-in-out infinite alternate}
+@keyframes g_saludo{from{transform:rotate(-18deg)}to{transform:rotate(18deg)}}
+#appPosada .reno{animation:g_llega-izq .9s .7s cubic-bezier(.2,1.2,.4,1) both}
+@keyframes g_llega-izq{from{transform:translateX(-140px);opacity:0}to{transform:none;opacity:1}}
+#appPosada .cabeza{transform-box:view-box;transform-origin:96px 176px;animation:g_asiente 2.4s 1.6s ease-in-out infinite}
+@keyframes g_asiente{0%,100%{transform:rotate(0)}30%{transform:rotate(-6deg)}60%{transform:rotate(3deg)}}
+#appPosada .mono{transform-box:view-box;transform-origin:180px 222px;animation:g_crecer .8s cubic-bezier(.2,1.3,.4,1) both}
+#appPosada .mono-cabeza{transform-box:view-box;transform-origin:180px 98px;animation:g_niega .9s .8s ease-in-out infinite}
+@keyframes g_niega{0%,100%{transform:rotate(0)}25%{transform:rotate(-9deg)}75%{transform:rotate(9deg)}}
+#appPosada .globo{transform-box:view-box;transform-origin:240px 86px;animation:g_aparece .45s .9s cubic-bezier(.2,1.6,.4,1) both}
+#appPosada .mono-regalos{animation:g_llega-izq .8s .3s cubic-bezier(.2,1.2,.4,1) both}
+#appPosada .nino-salta{transform-box:fill-box;transform-origin:50% 100%;animation:g_saltar .9s ease-in-out infinite}
+@keyframes g_saltar{0%,100%{transform:translateY(0) scaleY(.92)}12%{transform:translateY(0) scaleY(1)}
+  50%{transform:translateY(-36px) scaleY(1.04)}88%{transform:translateY(0) scaleY(1)}}
+#appPosada .nino-sombra{transform-box:fill-box;transform-origin:50% 50%;animation:g_sombra .9s ease-in-out infinite}
+@keyframes g_sombra{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(.5);opacity:.35}}
+#appPosada .nino-brazo{transform-box:fill-box;animation:g_agita .45s ease-in-out infinite alternate}
+#appPosada .nino-brazo.izq{transform-origin:100% 100%}
+#appPosada .nino-brazo.der{transform-origin:0% 100%}
+@keyframes g_agita{from{transform:rotate(-10deg)}to{transform:rotate(10deg)}}
+#appPosada .estrella-chica{transform-box:fill-box;transform-origin:50% 50%;animation:g_brilla 1.8s ease-in-out infinite}
+#appPosada.blanca .hero h1{color:var(--rojo);text-shadow:0 3px 0 #f2c14e}
+#appPosada.blanca .copo{color:#a9c6dc}
+#appPosada.blanca .nota{color:var(--suave)}
+#appPosada .santa-lee{animation:g_rebote 2s ease-in-out infinite}
+#appPosada .carta{transform-box:fill-box;transform-origin:20% 80%;animation:g_lee 2.4s ease-in-out infinite}
+@keyframes g_lee{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(3deg)}}
+#appPosada .escaner{animation:g_escanea 1.3s ease-in-out infinite alternate}
+@keyframes g_escanea{from{transform:translateY(0)}to{transform:translateY(32px)}}
+#appPosada .duende{animation:g_rebote 1.2s ease-in-out infinite}
+#appPosada .duende-cabeza{transform-box:fill-box;transform-origin:50% 100%;animation:g_asiente 2s ease-in-out infinite}
+#appPosada .duende-brazo{transform-box:fill-box;transform-origin:0% 10%;animation:g_lee 2s ease-in-out infinite}
+#appPosada .revisando{text-align:center;padding:10px 0 30px}
+#appPosada .revisando .t{font-family:Nunito,system-ui,sans-serif;font-weight:800;font-size:22px;line-height:1.35;color:#fff;
+  letter-spacing:.2px;text-shadow:0 1px 3px rgba(0,0,0,.35)}
+#appPosada .revisando .puntitos{display:inline-flex;gap:6px;margin-top:12px}
+#appPosada .revisando .puntitos i{width:10px;height:10px;border-radius:50%;background:var(--oro);animation:g_pulso 1s ease-in-out infinite}
+#appPosada .revisando .puntitos i:nth-child(2){background:#fff;animation-delay:.15s}
+#appPosada .revisando .puntitos i:nth-child(3){background:var(--rojo);animation-delay:.3s}
+@keyframes g_pulso{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(-6px);opacity:1}}
+#appPosada .hero{text-align:center;margin:0 0 20px}
+#appPosada .separador{height:24px}
+#appPosada .hero .lugar{font-family:"Mountains of Christmas",cursive;color:var(--oro);font-size:30px;margin:0;line-height:1}
+#appPosada .hero h1{font-family:"Mountains of Christmas",cursive;font-weight:700;font-size:clamp(36px,11vw,52px);line-height:1;
+  margin:4px 0 0;text-shadow:0 3px 0 var(--rojo2);text-wrap:balance}
+#appPosada .tarjeta{position:relative;background:var(--nieve);color:var(--tinta);border-radius:22px;padding:30px 22px 24px;
+  overflow:hidden;box-shadow:0 22px 40px -18px rgba(0,0,0,.6)}
+#appPosada .tarjeta::before{content:"";position:absolute;left:0;right:0;top:0;height:10px;
+  background:repeating-linear-gradient(-45deg,var(--rojo) 0 12px,#fff 12px 24px)}
+#appPosada .tarjeta h2{font-family:"Mountains of Christmas",cursive;font-size:34px;line-height:1.05;margin:0 0 8px;color:var(--rojo)}
+#appPosada .tarjeta p{margin:0;line-height:1.5;color:var(--suave);font-size:16px}
+#appPosada label.campo{display:block;margin-top:20px;font-weight:800;font-size:15px}
+#appPosada #n{display:block;width:100%;margin-top:8px;font:600 20px Nunito,sans-serif;padding:14px 16px;border-radius:14px;
+  border:2px solid #e9dcd2;background:#fff;color:var(--tinta);outline:none;transition:border-color .15s}
+#appPosada #n:focus{border-color:var(--hoja2)}
+#appPosada .boton{display:block;width:100%;margin-top:16px;border:0;border-radius:999px;padding:16px 20px;cursor:pointer;
+  font:900 19px Nunito,sans-serif;color:#fff;background:var(--rojo);box-shadow:0 6px 0 var(--rojo2);
+  transition:transform .08s,box-shadow .08s}
+#appPosada .boton:active{transform:translateY(4px);box-shadow:0 2px 0 var(--rojo2)}
+#appPosada .boton:focus-visible,#appPosada #n:focus-visible{outline:3px solid var(--oro);outline-offset:3px}
+#appPosada .boton[disabled]{opacity:.6}
+#appPosada .extra{margin-top:12px !important;font-size:14px !important;text-align:center}
+#appPosada .ayuda{margin-top:8px !important;font-size:14px !important}
+#appPosada .ayuda.error{color:var(--rojo) !important;font-weight:800}
+#appPosada .boton.secundario{background:#fff;color:var(--rojo);border:2px solid var(--rojo);box-shadow:0 4px 0 #e9dcd2}
+#appPosada .id-jugador{text-align:center;margin-top:12px !important;font-size:14px !important}
+#appPosada .id-jugador b{color:var(--tinta)}
+#appPosada .pasos{list-style:none;padding:0;margin:24px 4px 0;counter-reset:p}
+#appPosada .pasos li{counter-increment:p;display:flex;gap:14px;align-items:flex-start;margin-bottom:14px;line-height:1.45;color:#e3f1e8}
+#appPosada .pasos li::before{content:counter(p);flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
+  font:900 15px Nunito,sans-serif;color:#fff;background:var(--rojo);border:2px solid var(--oro)}
+#appPosada .pasos b{color:#fff}
+#appPosada .estado{display:flex;gap:14px;align-items:center;border-radius:20px;padding:16px 18px;margin-bottom:16px;
+  background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.2);animation:g_entra .55s cubic-bezier(.2,1.4,.4,1) both}
+#appPosada .estado .ico{flex:none;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-size:30px;background:rgba(255,255,255,.15)}
+#appPosada .estado .t{font-family:"Mountains of Christmas",cursive;font-size:30px;line-height:1.05;color:#fff;font-weight:700;
+  text-shadow:0 2px 0 var(--rojo2),0 0 12px rgba(255,255,255,.35)}
+#appPosada .estado .s{color:#e3f1e8;font-size:15px;margin-top:4px;line-height:1.35}
+#appPosada .estado.ok{position:relative;background:#fffaf0;border:9px solid transparent;border-radius:6px;
+  border-image:repeating-linear-gradient(-45deg,var(--rojo) 0 10px,#fff 10px 20px,var(--hoja2) 20px 30px,#fff 30px 40px) 9;
+  box-shadow:0 18px 30px -14px rgba(0,0,0,.6);padding:22px 56px 20px 18px}
+#appPosada .estado.ok .t{color:var(--rojo);text-shadow:none}
+#appPosada .estado.ok .s{color:var(--hoja2);font-weight:800}
+#appPosada .estado.ok .ico{background:#fff3d6;border:2px dashed #e3c98f}
+#appPosada .estado.ok .timbre{position:absolute;top:-18px;right:-14px;width:44px;height:52px;background:#fff;transform:rotate(8deg);
+  display:grid;place-items:center;font-size:24px;border:2px dashed var(--rojo);border-radius:3px;
+  box-shadow:0 3px 6px rgba(0,0,0,.18)}
+#appPosada .estado.repetido{background:#f7ecd8;border-color:#e3c98f}
+#appPosada .estado.repetido .t{color:var(--rojo);text-shadow:none}
+#appPosada .estado.repetido .s{color:var(--rojo2);font-weight:700}
+#appPosada .estado.repetido .ico{background:#fff;border:2px solid #f1d9d9}
+#appPosada .estado .ico svg{width:42px;height:42px}
+#appPosada .estado.expirado,#appPosada .estado.agotado{background:rgba(0,0,0,.25);border-color:#ffffff55}
+#appPosada .estado.grande{padding:22px 20px;margin:6px 0 16px}
+#appPosada .estado.grande .t{font-size:34px}
+#appPosada .aviso{display:table;margin:0 auto 14px;padding:8px 16px;border-radius:999px;font-weight:800;font-size:15px;
+  background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.25);color:#fff;animation:g_entra .45s both}
+#appPosada .aviso.ok{background:var(--rojo);border-color:var(--oro)}
+@keyframes g_entra{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+#appPosada .quien{display:flex;align-items:center;gap:14px}
+#appPosada .avatar{position:relative;flex:none;width:60px;height:60px;border-radius:50%;display:grid;place-items:center;
+  background:var(--hoja2);color:#fff;font:900 22px Nunito,sans-serif;margin-top:8px}
+#appPosada .avatar svg{position:absolute;top:-20px;left:4px;width:58px;transform:rotate(-12deg)}
+#appPosada .hola{color:var(--suave);font-size:15px}
+#appPosada .nombre{font-weight:900;font-size:24px;line-height:1.15;word-break:break-word}
+#appPosada .puntos{text-align:center;margin-top:22px;padding-top:18px;border-top:2px dashed #ecdcd3}
+#appPosada .puntos .num{display:block;font:900 72px/1 Nunito,sans-serif;color:var(--rojo);font-variant-numeric:tabular-nums}
+#appPosada .puntos .unidad{display:block;margin-top:4px;font-family:"Mountains of Christmas",cursive;font-size:26px;color:var(--hoja2)}
+#appPosada .nota{text-align:center;margin:22px 8px 0;color:#e3f1e8;line-height:1.5;font-size:16px}
+#appPosada .cargando{text-align:center;padding:40px 0;color:#e3f1e8;font-size:18px}
+#appPosada .conf{position:fixed;top:-20px;z-index:9;pointer-events:none;animation:g_caer linear forwards}
+@keyframes g_caer{to{transform:translateY(110vh) rotate(720deg)}}
+@media (prefers-reduced-motion:reduce){#appPosada *,#appPosada *::before,#appPosada *::after{animation:none !important}#appPosada #nieve,#appPosada .conf{display:none}}
+#appPosada .escena{display:block}
 </style>
 </head>
 <body>
@@ -609,6 +750,7 @@ function pararMusica(){
 function campanasLlegada(){ if(!sonidoOn)return; var t=AC.currentTime; [C5,E5,G5,C5*2].forEach(function(f,i){nota(f,t+i*0.12,1.4,0.09);}); cascabel(1,t+0.5); cascabel(0.8,t+0.7); }
 var btnS=document.getElementById('sonido');
 btnS.addEventListener('click',function(){
+  if(window.__sinSonido) return;
   if(!AC) iniciarAudio();
   if(AC.state==='suspended') AC.resume();
   sonidoOn=!sonidoOn;
@@ -624,6 +766,7 @@ btnS.addEventListener('click',function(){
   }
 });
 function primerToque(e){
+  if(window.__sinSonido){ quitarPrimer(); return; }
   if(e.target===btnS||btnS.contains(e.target)) return;
   if(!sonidoOn&&!btnS.classList.contains('activo')) btnS.click();
   quitarPrimer();
@@ -631,10 +774,17 @@ function primerToque(e){
 function quitarPrimer(){['pointerdown','touchend','click','keydown'].forEach(function(ev){document.removeEventListener(ev,primerToque,true);});}
 ['pointerdown','touchend','click','keydown'].forEach(function(ev){document.addEventListener(ev,primerToque,true);});
 btnS.addEventListener('click',quitarPrimer);
+// Apaga por completo el sonido del telón (se usa cuando se enciende la app)
+window.apagarSonidoTelon=function(){
+  window.__sinSonido=true;
+  try{ quitarPrimer(); }catch(e){}
+  try{ if(sonidoOn){ sonidoOn=false; pararMusica(); } if(MASTER){ MASTER.gain.cancelScheduledValues(0); MASTER.gain.value=0; } if(AC&&AC.state==='running') AC.suspend(); }catch(e){}
+  btnS.style.display='none';
+};
 document.addEventListener('visibilitychange',function(){
   if(!AC) return;
   if(document.hidden){ pararMusica(); AC.suspend(); }
-  else if(sonidoOn){ AC.resume().then(function(){ MASTER.gain.setValueAtTime(0.7,AC.currentTime); arrancarMusica(); }); }
+  else if(sonidoOn&&!window.__sinSonido){ AC.resume().then(function(){ MASTER.gain.setValueAtTime(0.7,AC.currentTime); arrancarMusica(); }); }
 });
 var ultimoPaso=0, tAnt=0;
 
@@ -665,6 +815,7 @@ function dibujarButacas(){
 dibujarButacas(); addEventListener('resize',dibujarButacas);
 var t0=performance.now();
 function cuadro(ts){
+  if(window.__appActiva) return;   // con la app encendida, el telón deja de animarse
   var t=(ts-t0)/1000, W=innerWidth, H=innerHeight, esc=luz.getBoundingClientRect();
   var bh=Math.max(70,Math.min(H*0.13,150)), r=Math.max(64,Math.min(W,H)*0.15);
   var luzM=[], sombraM=[];
@@ -715,6 +866,38 @@ function cuadro(ts){
 requestAnimationFrame(cuadro);
 </script>
 <div id="appPosada" hidden>
+  <!-- Letrero del Polo Norte (se reutiliza en todas las escenas) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="poste" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(-35)">
+      <rect width="10" height="10" fill="#fff"/><rect width="5" height="10" fill="#c8102e"/>
+    </pattern>
+    <linearGradient id="madera" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a86b3c"/><stop offset="1" stop-color="#7d4a25"/>
+    </linearGradient>
+    <symbol id="letrero" viewBox="-92 0 452 238">
+      <rect x="-37" y="34" width="12" height="186" rx="3" fill="url(#poste)" stroke="#b30d26" stroke-width="1"/>
+      <circle cx="-31" cy="32" r="9" fill="#f2c14e" stroke="#d4a63a" stroke-width="2"/>
+      <g transform="rotate(-5 -31 74)">
+        <path d="M-86 52 H18 L30 74 L18 96 H-86 Z" fill="url(#madera)" stroke="#5e3519" stroke-width="2"/>
+        <path d="M-80 60 H10 M-80 88 H12" stroke="#6b3e1f" stroke-width="1" opacity=".45"/>
+        <circle cx="-79" cy="74" r="2" fill="#4a2a14"/><circle cx="20" cy="74" r="2" fill="#4a2a14"/>
+        <path d="M-88 54 Q-84 44 -74 50 Q-66 42 -56 50 Q-46 43 -36 50 Q-26 42 -16 50 Q-6 44 4 50 Q12 45 18 52 L18 56 H-88Z" fill="#fff"/>
+        <text id="ltr1" x="-34" y="83" text-anchor="middle" font-family="'Saira Condensed',sans-serif" font-weight="700" font-size="25"
+          letter-spacing="2" fill="#fff" style="paint-order:stroke" stroke="#4a2a14" stroke-width="2"></text>
+      </g>
+      <g transform="rotate(4 -31 128)">
+        <path d="M-82 108 H24 L36 129 L24 150 H-82 Z" fill="url(#madera)" stroke="#5e3519" stroke-width="2"/>
+        <path d="M-76 116 H18 M-76 142 H20" stroke="#6b3e1f" stroke-width="1" opacity=".45"/>
+        <circle cx="-75" cy="129" r="2" fill="#4a2a14"/><circle cx="26" cy="129" r="2" fill="#4a2a14"/>
+        <path d="M-84 110 Q-80 101 -70 106 Q-60 99 -50 106 Q-40 100 -30 106 Q-20 99 -10 106 Q0 100 10 106 Q18 101 24 108 L24 112 H-84Z" fill="#fff"/>
+        <text id="ltr2" x="-27" y="137" text-anchor="middle" font-family="'Saira Condensed',sans-serif" font-weight="700" font-size="22"
+          letter-spacing="1.2" fill="#fff" style="paint-order:stroke" stroke="#4a2a14" stroke-width="2"></text>
+      </g>
+      <ellipse cx="-31" cy="214" rx="20" ry="7" fill="#fff"/>
+    </symbol>
+  </defs>
+</svg>
   <svg class="ap-esferas" id="apEsferas" aria-hidden="true"></svg>
   <main class="ap-hoja" id="apHoja"><div class="ap-cargando">Cargando…</div></main>
 </div>
@@ -756,38 +939,57 @@ function esferas(){
 }
 
 /* ---------- Pantalla de registro ---------- */
+var ESCENA="<svg class=\"escena\" id=\"apEscena\" viewBox=\"-92 0 452 238\" role=\"img\" aria-label=\"Santa Claus saludando junto a un pino navide\u00f1o y un reno\">\n    <!-- Suelo nevado -->\n    <ellipse cx=\"134\" cy=\"222\" rx=\"224\" ry=\"15\" fill=\"#fffaf3\"/>\n    <ellipse cx=\"134\" cy=\"219\" rx=\"194\" ry=\"7\" fill=\"#e7f0f5\"/>\n    <use href=\"#letrero\" x=\"-92\" y=\"0\" width=\"452\" height=\"238\"/>\n\n    <!-- Reno -->\n    <g class=\"reno\">\n      <ellipse cx=\"44\" cy=\"171\" rx=\"6\" ry=\"5\" fill=\"#fff\"/>\n      <rect x=\"50\" y=\"184\" width=\"6\" height=\"30\" rx=\"3\" fill=\"#6b4220\"/>\n      <rect x=\"60\" y=\"186\" width=\"6\" height=\"28\" rx=\"3\" fill=\"#7a4c26\"/>\n      <rect x=\"80\" y=\"186\" width=\"6\" height=\"28\" rx=\"3\" fill=\"#7a4c26\"/>\n      <rect x=\"90\" y=\"184\" width=\"6\" height=\"30\" rx=\"3\" fill=\"#6b4220\"/>\n      <ellipse cx=\"72\" cy=\"178\" rx=\"31\" ry=\"17\" fill=\"#8b5a2b\"/>\n      <ellipse cx=\"74\" cy=\"184\" rx=\"20\" ry=\"8\" fill=\"#c08a52\"/>\n      <g class=\"cabeza\">\n        <polygon points=\"86,176 98,146 110,150 100,180\" fill=\"#8b5a2b\"/>\n        <path d=\"M104 132 L97 112 M100 121 L91 116 M97 112 L93 103 M113 132 L117 110 M115 120 L124 114 M117 110 L121 101\"\n              stroke=\"#d9b07a\" stroke-width=\"3.2\" stroke-linecap=\"round\" fill=\"none\"/>\n        <ellipse cx=\"98\" cy=\"134\" rx=\"7\" ry=\"3.5\" fill=\"#6b4220\" transform=\"rotate(-25 98 134)\"/>\n        <ellipse cx=\"110\" cy=\"142\" rx=\"14\" ry=\"10.5\" fill=\"#8b5a2b\"/>\n        <ellipse cx=\"122\" cy=\"147\" rx=\"7.5\" ry=\"6.5\" fill=\"#c08a52\"/>\n        <circle cx=\"128\" cy=\"145\" r=\"3.6\" fill=\"#3a2a1a\"/>\n        <circle cx=\"108\" cy=\"138\" r=\"2.2\" fill=\"#1d1d1d\"/>\n        <circle cx=\"108.8\" cy=\"137.2\" r=\".7\" fill=\"#fff\"/>\n        <path d=\"M89 168 Q98 176 107 164\" stroke=\"#c8102e\" stroke-width=\"6\" stroke-linecap=\"round\" fill=\"none\"/>\n        <circle cx=\"98\" cy=\"175\" r=\"4\" fill=\"#f2c14e\"/>\n      </g>\n    </g>\n\n    <!-- Pino -->\n    <g class=\"arbol\">\n      <rect x=\"171\" y=\"192\" width=\"18\" height=\"26\" rx=\"3\" fill=\"#6b3e26\"/>\n      <polygon points=\"108,202 180,118 180,202\" fill=\"#2f9e62\"/>\n      <polygon points=\"252,202 180,118 180,202\" fill=\"#1f7a4d\"/>\n      <polygon points=\"122,162 180,84 180,162\" fill=\"#2f9e62\"/>\n      <polygon points=\"238,162 180,84 180,162\" fill=\"#1f7a4d\"/>\n      <polygon points=\"140,124 180,50 180,124\" fill=\"#2f9e62\"/>\n      <polygon points=\"220,124 180,50 180,124\" fill=\"#1f7a4d\"/>\n      <path d=\"M148 112 Q180 126 210 106\" stroke=\"#f2c14e\" stroke-width=\"3\" fill=\"none\"/>\n      <path d=\"M132 152 Q180 170 226 146\" stroke=\"#f2c14e\" stroke-width=\"3\" fill=\"none\"/>\n      <path d=\"M118 192 Q180 212 244 186\" stroke=\"#f2c14e\" stroke-width=\"3\" fill=\"none\"/>\n      <circle cx=\"166\" cy=\"96\" r=\"5.5\" fill=\"#c8102e\"/><circle cx=\"198\" cy=\"136\" r=\"5.5\" fill=\"#fff\"/>\n      <circle cx=\"152\" cy=\"178\" r=\"6\" fill=\"#fff\"/><circle cx=\"212\" cy=\"176\" r=\"6\" fill=\"#c8102e\"/>\n      <g>\n        <circle class=\"luz\" cx=\"158\" cy=\"116\" r=\"4\" fill=\"#ff4d4d\"/>\n        <circle class=\"luz\" cx=\"180\" cy=\"119\" r=\"4\" fill=\"#ffe08a\" style=\"animation-delay:.3s\"/>\n        <circle class=\"luz\" cx=\"200\" cy=\"112\" r=\"4\" fill=\"#7fd3ff\" style=\"animation-delay:.6s\"/>\n        <circle class=\"luz\" cx=\"142\" cy=\"157\" r=\"4\" fill=\"#ffe08a\" style=\"animation-delay:.9s\"/>\n        <circle class=\"luz\" cx=\"164\" cy=\"163\" r=\"4\" fill=\"#7fd3ff\" style=\"animation-delay:.2s\"/>\n        <circle class=\"luz\" cx=\"188\" cy=\"163\" r=\"4\" fill=\"#ff4d4d\" style=\"animation-delay:.5s\"/>\n        <circle class=\"luz\" cx=\"212\" cy=\"154\" r=\"4\" fill=\"#ffe08a\" style=\"animation-delay:.8s\"/>\n        <circle class=\"luz\" cx=\"130\" cy=\"197\" r=\"4\" fill=\"#7fd3ff\" style=\"animation-delay:.4s\"/>\n        <circle class=\"luz\" cx=\"158\" cy=\"204\" r=\"4\" fill=\"#ff4d4d\" style=\"animation-delay:.7s\"/>\n        <circle class=\"luz\" cx=\"190\" cy=\"205\" r=\"4\" fill=\"#ffe08a\" style=\"animation-delay:.1s\"/>\n        <circle class=\"luz\" cx=\"222\" cy=\"198\" r=\"4\" fill=\"#ff4d4d\" style=\"animation-delay:1s\"/>\n      </g>\n      <polygon class=\"estrella\" fill=\"#f2c14e\" stroke=\"#fff3c4\" stroke-width=\"1.2\"\n        points=\"180.0,29.0 184.1,40.3 196.2,40.7 186.7,48.2 190.0,59.8 180.0,53.0 170.0,59.8 173.3,48.2 163.8,40.7 175.9,40.3\"/>\n      <!-- Regalos -->\n      <rect x=\"128\" y=\"200\" width=\"28\" height=\"22\" rx=\"3\" fill=\"#c8102e\"/>\n      <rect x=\"139\" y=\"200\" width=\"6\" height=\"22\" fill=\"#fff\"/><rect x=\"128\" y=\"208\" width=\"28\" height=\"5\" fill=\"#fff\"/>\n      <rect x=\"204\" y=\"196\" width=\"30\" height=\"26\" rx=\"3\" fill=\"#f2c14e\"/>\n      <rect x=\"216\" y=\"196\" width=\"6\" height=\"26\" fill=\"#c8102e\"/><rect x=\"204\" y=\"206\" width=\"30\" height=\"5\" fill=\"#c8102e\"/>\n    </g>\n\n    <!-- Santa -->\n    <g class=\"santa\"><g class=\"santa-cuerpo\">\n      <rect x=\"268\" y=\"204\" width=\"14\" height=\"13\" rx=\"4\" fill=\"#222\"/>\n      <rect x=\"288\" y=\"204\" width=\"14\" height=\"13\" rx=\"4\" fill=\"#222\"/>\n      <ellipse cx=\"259\" cy=\"180\" rx=\"8\" ry=\"15\" fill=\"#c8102e\" transform=\"rotate(14 259 180)\"/>\n      <circle cx=\"255\" cy=\"194\" r=\"6.5\" fill=\"#1f7a4d\"/>\n      <ellipse cx=\"285\" cy=\"180\" rx=\"28\" ry=\"31\" fill=\"#c8102e\"/>\n      <rect x=\"259\" y=\"198\" width=\"52\" height=\"8\" rx=\"4\" fill=\"#fff\"/>\n      <rect x=\"282\" y=\"150\" width=\"6\" height=\"48\" fill=\"#fff\"/>\n      <rect x=\"257\" y=\"176\" width=\"56\" height=\"9\" fill=\"#222\"/>\n      <rect x=\"278\" y=\"174\" width=\"14\" height=\"13\" rx=\"2\" fill=\"none\" stroke=\"#f2c14e\" stroke-width=\"3\"/>\n      <g class=\"mano\">\n        <rect x=\"303\" y=\"130\" width=\"12\" height=\"34\" rx=\"6\" fill=\"#c8102e\"/>\n        <rect x=\"302\" y=\"133\" width=\"14\" height=\"6\" rx=\"3\" fill=\"#fff\"/>\n        <circle cx=\"309\" cy=\"127\" r=\"7.5\" fill=\"#1f7a4d\"/>\n      </g>\n      <circle cx=\"285\" cy=\"128\" r=\"18\" fill=\"#f6c9a8\"/>\n      <circle cx=\"275\" cy=\"133\" r=\"4\" fill=\"#f4a3a0\" opacity=\".7\"/><circle cx=\"295\" cy=\"133\" r=\"4\" fill=\"#f4a3a0\" opacity=\".7\"/>\n      <path d=\"M266 130 Q267 162 285 168 Q303 162 304 130 Q296 142 285 142 Q274 142 266 130Z\" fill=\"#fff\"/>\n      <ellipse cx=\"279\" cy=\"139\" rx=\"7.5\" ry=\"4\" fill=\"#fff\"/><ellipse cx=\"291\" cy=\"139\" rx=\"7.5\" ry=\"4\" fill=\"#f4f4f4\"/>\n      <circle cx=\"285\" cy=\"134\" r=\"3.6\" fill=\"#e88f7a\"/>\n      <circle cx=\"279\" cy=\"126\" r=\"2.1\" fill=\"#222\"/><circle cx=\"291\" cy=\"126\" r=\"2.1\" fill=\"#222\"/>\n      <path d=\"M268 117 Q284 84 314 102 L302 118Z\" fill=\"#c8102e\"/>\n      <rect x=\"264\" y=\"111\" width=\"42\" height=\"10\" rx=\"5\" fill=\"#fff\"/>\n      <circle cx=\"315\" cy=\"104\" r=\"7\" fill=\"#fff\"/>\n    </g></g>\n  </svg>";
+function ponerLetrero(t){
+  var p=String(t||'').trim().toUpperCase().split(/\s+/), arriba=p.shift()||'', abajo=p.join(' ');
+  [['ltr1',arriba,25,2,92],['ltr2',abajo,22,1.2,96]].forEach(function(x){
+    var el=document.getElementById(x[0]); if(!el) return; var n=x[1].length, fs=x[2], ancho=n*(fs*0.5+x[3]);
+    if(ancho>x[4]) fs=Math.max(11,fs*x[4]/ancho); el.textContent=x[1]; el.setAttribute('font-size',fs.toFixed(1)); });
+}
 function registro(error){
-  poner(titulo('¡Bienvenido','a la posada!')+
-    '<p class="ap-lema">Esta noche cada código QR vale puntos 🎄</p>'+
-    '<section class="ap-card"><h2>Elige tu apodo</h2><p>Con él participas en todas las dinámicas y juntas puntos para la subasta.</p>'+
-    '<input id="apApodo" class="ap-campo" maxlength="12" placeholder="Escribe tu apodo" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="go">'+
-    '<p class="ap-ayuda'+(error?' err':'')+'" id="apAyuda">'+(error?esc(error):'De 4 a 12 letras o números, sin espacios.')+'</p>'+
-    '<button class="ap-btn" id="apEntrar" type="button">🎁 Entrar a la posada</button>'+
-    '<p class="ap-nota">¿Ya tenías apodo? Escríbelo igual y recuperas tus puntos.</p></section>');
-  var inp=$('apApodo'), btn=$('apEntrar');
+  poner(ESCENA+
+    '<section class="tarjeta">'+
+      '<h2>¡Bienvenido a la posada!</h2>'+
+      '<p>Escanea todos los códigos QR que puedas. Cada uno te da puntos que puedes cambiar por premios.</p>'+
+      '<label class="campo" for="n">Elige tu apodo</label>'+
+      '<input id="n" maxlength="12" placeholder="Escribe tu apodo" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="go">'+
+      '<p class="ayuda'+(error?' error':'')+'" id="apAyuda">'+(error?esc(error):'De 4 a 12 letras o números, sin espacios.')+'</p>'+
+      '<button class="boton" id="apEntrar" type="button">🎁 Unirme y sumar puntos</button>'+
+      '<p class="extra">Al unirte recibes tus puntos de bienvenida.</p>'+
+      '<p class="extra">¿Ya tenías apodo? Escríbelo igual y recuperas tus puntos.</p>'+
+    '</section>'+
+    '<ol class="pasos">'+
+      '<li><span><b>Encuentra un QR</b> y escanéalo desde esta app.</span></li>'+
+      '<li><span><b>Suma puntos.</b> Cada código cuenta una sola vez por persona.</span></li>'+
+      '<li><span><b>Canjea tus puntos</b> por premios en la subasta.</span></li>'+
+    '</ol>'+
+    '<p class="nota">Usa siempre este mismo celular para no perder tus puntos.</p>');
+  ponerLetrero(window.__eventoPosada||'Posada Gomez 2026');
+  var inp=$('n'), btn=$('apEntrar');
   inp.oninput=function(){inp.value=inp.value.replace(/[^A-Za-z0-9ÁÉÍÓÚÜÑáéíóúüñ]/g,'');};
   function enviar(op){
     var a=inp.value.trim();
-    if(!/^[A-Za-z0-9ÁÉÍÓÚÜÑáéíóúüñ]{4,12}$/.test(a)){ $('apAyuda').textContent='Usa de 4 a 12 letras o números, sin espacios ni símbolos.'; $('apAyuda').className='ap-ayuda err'; inp.focus(); return; }
+    if(!/^[A-Za-z0-9ÁÉÍÓÚÜÑáéíóúüñ]{4,12}$/.test(a)){ $('apAyuda').textContent='Usa de 4 a 12 letras o números, sin espacios ni símbolos.'; $('apAyuda').className='ayuda error'; inp.focus(); return; }
     btn.disabled=true; btn.textContent='Registrando…';
     llamar({api:'registrar',clave:clave(),nombre:a,opcion:op||''},function(o){
+      if(o&&o.evento) window.__eventoPosada=o.evento;
       if(o&&o.confirmar){ confirmar(a,o.candidatos||[]); return; }
-      if(!o||!o.nombre){ btn.disabled=false; btn.textContent='🎁 Entrar a la posada'; $('apAyuda').textContent='No se pudo registrar, intenta de nuevo.'; $('apAyuda').className='ap-ayuda err'; return; }
+      if(!o||!o.nombre){ btn.disabled=false; btn.textContent='🎁 Unirme y sumar puntos'; $('apAyuda').textContent='No se pudo registrar, intenta de nuevo.'; $('apAyuda').className='ayuda error'; return; }
       if(o.nuevaClave) guardarClave(o.nuevaClave);
       datos=o; inicio(o.nuevo);
-    },function(){ btn.disabled=false; btn.textContent='🎁 Entrar a la posada'; aviso('Sin conexión. Intenta de nuevo.'); });
+    },function(){ btn.disabled=false; btn.textContent='🎁 Unirme y sumar puntos'; aviso('Sin conexión. Intenta de nuevo.'); });
   }
   btn.onclick=function(){enviar('');};
   inp.onkeydown=function(e){if(e.key==='Enter')enviar('');};
-  registro.enviar=enviar;
 }
 function confirmar(apodo,cands){
   var c=cands[0]||{};
-  poner(titulo('¡Bienvenido','a la posada!')+
-    '<section class="ap-card" style="margin-top:18px"><h2>Ese apodo ya está registrado</h2>'+
+  poner(ESCENA+
+    '<section class="tarjeta"><h2>Ese apodo ya está registrado</h2>'+
     '<p>¿<b>'+esc(c.nombre||apodo)+'</b> es tu apodo? Si es tuyo, tus puntos se recuperan en este celular.</p>'+
-    '<button class="ap-btn" id="apSi" type="button">✅ Sí, es mío · '+fmt(c.total)+' pts</button>'+
-    '<button class="ap-btn sec" id="apNo" type="button">No, elegiré otro apodo</button></section>');
+    '<button class="boton" id="apSi" type="button">✅ Sí, es mío · '+fmt(c.total)+' pts</button>'+
+    '<button class="boton secundario" id="apNo" type="button">No, elegiré otro apodo</button></section>');
+  ponerLetrero(window.__eventoPosada||'Posada Gomez 2026');
   $('apSi').onclick=function(){ $('apSi').disabled=true;
     llamar({api:'registrar',clave:clave(),nombre:apodo,opcion:'vincular:'+c.id},function(o){ if(o&&o.nuevaClave) guardarClave(o.nuevaClave); if(o&&o.nombre){datos=o;inicio(false);} else registro('No se pudo recuperar, intenta de nuevo.'); }); };
   $('apNo').onclick=function(){ registro('El apodo "'+apodo+'" ya está ocupado. Elige otro.'); };
@@ -806,12 +1008,9 @@ function inicio(nuevo){
       '<button class="ap-tile oro" type="button" data-s="premios"><i>🎁</i><span><b>Premios</b><small>Tus puntos y lo que ganes en la subasta</small></span></button>'+
     '</nav><p class="ap-pie">Deja esta app abierta toda la noche 🎄</p>');
   document.querySelectorAll('.ap-tile').forEach(function(b){ b.onclick=function(){ aviso('¡Esta sección se activa muy pronto! 🎄'); }; });
-  if(nuevo){
-    // puntos de bienvenida (si existe el código BIENVENIDA en la hoja QRs)
-    llamar({api:'escanear',codigo:'BIENVENIDA',clave:clave(),nombre:'',opcion:''},function(o){
-      if(o&&o.tipo==='ok'){ datos=Object.assign(datos||{},{total:o.total}); $('apPts').textContent=fmt(o.total);
-        $('apBono').innerHTML='<div class="ap-bono">🎉 ¡'+esc(o.titulo.replace(/[¡!]/g,''))+' de bienvenida!</div>'; confeti(); }
-    },function(){});
+  if(nuevo && d.bono>0){
+    // +100 puntos automáticos al unirse (los da el Apps Script al registrarse)
+    $('apBono').innerHTML='<div class="ap-bono">🎉 ¡+'+fmt(d.bono)+' puntos de bienvenida!</div>'; confeti();
   }
 }
 function actualizar(){ llamar({api:'estado',clave:clave()},function(o){ if(o&&o.nombre){ datos=o; var p=$('apPts'); if(p) p.textContent=fmt(o.total); } },function(){}); }
@@ -819,12 +1018,15 @@ function actualizar(){ llamar({api:'estado',clave:clave()},function(o){ if(o&&o.
 /* ---------- Encender / apagar la app ---------- */
 function mostrarApp(){
   if(activa) return; activa=true;
-  try{ if(window.sonidoOn) document.getElementById('sonido').click(); }catch(e){}
+  try{ if(window.apagarSonidoTelon) window.apagarSonidoTelon(); }catch(e){}
+  window.__appActiva=true;
   ['teatro','sonido'].forEach(function(id){var el=$(id); if(el) el.style.display='none';});
   document.title='Posada Navideña'; $('appPosada').hidden=false; esferas();
   poner('<div class="ap-cargando">Cargando…</div>');
   llamar({api:'estado',clave:clave()},function(o){ if(o&&o.nombre){datos=o;inicio(false);} else registro(); },function(){ registro(); });
   setInterval(function(){ if(datos&&$('apPts')) actualizar(); },30000);
+  // si el organizador apaga la app, se regresa al telón
+  if(forzar!=='1') setInterval(function(){ llamar({api:'modo'},function(o){ if(o&&o.app===false) location.reload(); },function(){}); },45000);
 }
 function revisarModo(){
   llamar({api:'modo'},function(o){ if(o&&o.app){ clearInterval(sondeo); mostrarApp(); } },function(){});
