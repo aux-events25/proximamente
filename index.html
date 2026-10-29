@@ -288,10 +288,31 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:Nunit
 .ap-ultimo{margin:0 0 12px;text-align:center;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);border-radius:14px;padding:8px 12px;font-weight:800}
 .ap-mini{margin:8px 0 0 !important;text-align:center;font-size:14px !important;color:#6e5f61}
 .ap-hola{color:#6e5f61;font-weight:700}
-.ap-tile.bloqueado{filter:saturate(.35) brightness(.85)}
-.ap-pronto{display:none;position:absolute;right:14px;top:10px;font-style:normal;font:900 12px Nunito,sans-serif;background:rgba(0,0,0,.35);color:#fff;border-radius:999px;padding:3px 9px}
-.ap-tile.bloqueado .ap-pronto{display:block}
+.ap-abierto,.ap-cerrado{display:flex;align-items:center;gap:16px;width:100%}
+.ap-cerrado{display:none}
+.ap-tile.bloqueado{background:#050506 !important;color:#fff;border:1.5px solid rgba(255,255,255,.08);box-shadow:inset 0 0 30px rgba(255,255,255,.04),0 10px 22px -10px rgba(0,0,0,.8)}
+.ap-tile.bloqueado .ap-abierto{display:none}
+.ap-tile.bloqueado .ap-cerrado{display:flex}
 .ap-tile.bloqueado::after{display:none}
+.ap-pista{flex:none;width:62px;height:62px;border-radius:18px;display:grid;place-items:center;font-size:34px;font-style:normal;
+  background:rgba(255,255,255,.06);animation:apPista 2.6s ease-in-out infinite}
+.ap-pista svg{width:38px;height:38px}
+@keyframes apPista{0%,100%{filter:drop-shadow(0 0 0 rgba(242,193,78,0));opacity:.55}50%{filter:drop-shadow(0 0 10px rgba(242,193,78,.8));opacity:1}}
+.ap-cerrado b{display:block;font-family:"Luckiest Guy",sans-serif;font-weight:400;font-size:24px;letter-spacing:.03em;color:#f2c14e;line-height:1.05}
+.ap-cerrado small{display:block;font-weight:700;font-size:13px;color:rgba(255,255,255,.55);margin-top:4px}
+.ap-tile.recien{animation:apDesbloquea 1.2s ease}
+@keyframes apDesbloquea{0%{transform:scale(.92);box-shadow:0 0 0 0 rgba(242,193,78,.9)}40%{transform:scale(1.04)}100%{transform:scale(1);box-shadow:0 0 0 22px rgba(242,193,78,0)}}
+.ap-notif{position:fixed;inset:0;z-index:500;background:rgba(5,15,10,.7);display:grid;place-items:center;padding:20px;animation:apSube .3s ease both}
+.ap-notif-caja{position:relative;width:min(92vw,380px);background:#fffaf3;color:#2a1d1f;border-radius:24px;padding:22px 20px 18px;text-align:center;overflow:hidden;
+  box-shadow:0 26px 50px -18px rgba(0,0,0,.8);animation:apRebote .6s cubic-bezier(.2,1.5,.4,1) both}
+@keyframes apRebote{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+.ap-notif-caja::before{content:"";position:absolute;left:0;right:0;top:0;height:10px;background:repeating-linear-gradient(-45deg,#c8102e 0 12px,#fff 12px 24px)}
+.ap-notif-cab{margin-top:6px;font:900 13px Nunito,sans-serif;letter-spacing:.12em;color:#1f7a4d}
+.ap-notif-ico{width:84px;height:84px;margin:12px auto 6px;border-radius:24px;background:#c8102e;display:grid;place-items:center;font-size:46px;box-shadow:0 8px 18px -8px rgba(0,0,0,.5)}
+.ap-notif-ico svg{width:50px;height:50px}
+.ap-notif h3{margin:6px 0 4px;font-family:"Luckiest Guy",sans-serif;font-weight:400;font-size:26px;line-height:1.1;color:#c8102e;letter-spacing:.02em}
+.ap-notif p{margin:0 0 6px;color:#6e5f61;font-weight:700}
+.ap-notif .boton{margin-top:12px}
 .ap-camara{position:relative;width:100%;aspect-ratio:3/4;max-height:62vh;border-radius:24px;overflow:hidden;background:#06170f;border:3px solid #f2c14e;box-shadow:0 18px 30px -16px rgba(0,0,0,.7)}
 .ap-camara video{width:100%;height:100%;object-fit:cover;display:block}
 .ap-marco{position:absolute;inset:16%;pointer-events:none}
@@ -1206,7 +1227,7 @@ requestAnimationFrame(cuadro);
    Prueba sin encenderla: agrega ?app=1 al link (y ?app=0 para ver el telón). */
 (function(){
 var API='https://script.google.com/macros/s/AKfycbz3BdSkfxvH9OzpXBI4hdP0D5GQu6DWrOJOsajLLxBc3F9gvqqaVgL_Pq5Nra9zPg1s/exec';
-var LLAVE='posada_jugador', activa=false, datos=null, vista='', F={qr:false,mural:false,premios:false};
+var modoListo=false, LLAVE='posada_jugador', activa=false, datos=null, vista='', F={qr:false,mural:false,premios:false};
 var forzar=new URLSearchParams(location.search).get('app');
 var GORRO='<svg viewBox="0 0 120 80" aria-hidden="true"><path d="M10 62 C16 26 52 4 88 8 C108 11 118 26 116 46 L102 50 C98 36 90 30 80 31 C90 44 96 54 98 62 Z" fill="#c8102e"/><rect x="2" y="56" width="100" height="22" rx="11" fill="#fff"/><circle cx="110" cy="48" r="11" fill="#fff"/></svg>';
 function $(i){return document.getElementById(i);}
@@ -1348,10 +1369,14 @@ function confirmar(apodo,cands){
 }
 
 /* ---------- Inicio (menú) ---------- */
+var QR_ICONO='<svg viewBox="0 0 29 29" aria-hidden="true"><path fill="#fff" d="M0 0h9v9H0zM2 2v5h5V2zM3 3h3v3H3zM20 0h9v9h-9zM22 2v5h5V2zM23 3h3v3h-3zM0 20h9v9H0zM2 22v5h5v-5zM3 23h3v3H3zM11 0h2v2h-2zM14 1h2v3h-2zM11 4h2v3h-2zM16 5h2v2h-2zM12 9h3v2h-3zM17 9h2v4h-2zM0 11h3v2H0zM5 11h4v2H5zM10 12h2v3h-2zM13 13h3v2h-3zM20 11h3v2h-3zM25 11h4v2h-4zM1 15h4v2H1zM7 15h2v3H7zM18 15h3v2h-3zM23 15h2v4h-2zM27 15h2v3h-2zM11 17h4v2h-4zM16 18h2v3h-2zM20 19h2v2h-2zM11 21h2v2h-2zM14 22h3v2h-3zM20 22h3v3h-3zM25 21h4v2h-4zM11 25h4v2h-4zM17 26h3v3h-3zM24 25h2v4h-2zM27 26h2v3h-2z"/></svg>';
 var TILES=[
-  {s:'qr',cls:'rojo',ico:'📷',t:'Escanea códigos QR',d:'Encuentra los QR escondidos y suma puntos',off:'El escáner se activa cuando empiece el juego 🎄'},
-  {s:'mural',cls:'verde',ico:'📸',t:'Mural navideño',d:'Sube fotos o cartas para la pantalla',off:'El mural se abre más tarde en la posada 📸'},
-  {s:'premios',cls:'oro',ico:'🎁',t:'Premios',d:'Lo que ganaste en la subasta y tus puntos',off:'Los premios se abren en la subasta 🎁'}];
+  {s:'qr',cls:'rojo',ico:'📷',t:'Escanea códigos QR',d:'Encuentra los QR escondidos y suma puntos',off:'El escáner se activa cuando empiece el juego 🎄',
+   pista:QR_ICONO,frase:'¡Espéralo pronto!',nTit:'¡Ya puedes escanear códigos QR!',nTxt:'Busca los QR escondidos en la posada y suma puntos.'},
+  {s:'mural',cls:'verde',ico:'📸',t:'Mural navideño',d:'Sube fotos o cartas para la pantalla',off:'El mural se abre más tarde en la posada 📸',
+   pista:'🖼️',frase:'Muy pronto…',nTit:'¡El mural navideño está abierto!',nTxt:'Sube tus fotos o cartas y míralas en la pantalla grande.'},
+  {s:'premios',cls:'oro',ico:'🎁',t:'Premios',d:'Lo que ganaste en la subasta y tus puntos',off:'Los premios se abren en la subasta 🎁',
+   pista:'🎁',frase:'Próximamente',nTit:'¡Ya puedes ver tus premios!',nTxt:'Revisa lo que ganaste en la subasta y tus puntos.'}];
 function inicio(op){
   op=op||{}; vista='inicio'; detenerCamara(); verEscena('normal');
   var d=datos||{};
@@ -1361,7 +1386,9 @@ function inicio(op){
     '<div class="ap-puntos"><b id="apPts">'+fmt(d.total)+'</b><span>puntos disponibles</span></div>'+
     '<p class="ap-mini" id="apMini">'+mini(d)+'</p><div id="apBono"></div></section>'+
     '<nav class="ap-menu" aria-label="Menú de la posada">'+TILES.map(function(t){
-      return '<button class="ap-tile '+t.cls+(F[t.s]?'':' bloqueado')+'" type="button" data-s="'+t.s+'"><i>'+t.ico+'</i><span><b>'+t.t+'</b><small>'+t.d+'</small></span><em class="ap-pronto">🔒 Pronto</em></button>';
+      return '<button class="ap-tile '+t.cls+(F[t.s]?'':' bloqueado')+'" type="button" data-s="'+t.s+'" aria-label="'+t.t+'">'+
+        '<span class="ap-abierto"><i>'+t.ico+'</i><span><b>'+t.t+'</b><small>'+t.d+'</small></span></span>'+
+        '<span class="ap-cerrado" aria-hidden="true"><i class="ap-pista">'+t.pista+'</i><span><b>'+t.frase+'</b><small>🔒 Se desbloquea durante la posada</small></span></span></button>';
     }).join('')+'</nav><p class="ap-pie">Deja esta app abierta toda la noche 🎄</p>');
   document.querySelectorAll('.ap-tile').forEach(function(b){ b.onclick=function(){ abrir(b.getAttribute('data-s')); }; });
   if(op.desde!=null) contador($('apPts'),Number(op.desde),Number(d.total||0));
@@ -1369,7 +1396,34 @@ function inicio(op){
   if(op.premio) $('apBono').innerHTML='<div class="ap-bono">🎁 ¡Ganaste <b>'+esc(op.premio)+'</b> en la subasta! Revisa tus premios.</div>';
 }
 function mini(d){ return (d.ganados!=null?'Ganaste <b>'+fmt(d.ganados)+'</b> en total':'')+(d.canjes?' · '+d.canjes+' premio'+(d.canjes===1?'':'s'):''); }
-function pintarTiles(){ document.querySelectorAll('.ap-tile').forEach(function(b){ b.classList.toggle('bloqueado',!F[b.getAttribute('data-s')]); }); }
+function pintarTiles(nuevos){ document.querySelectorAll('.ap-tile').forEach(function(b){ var s=b.getAttribute('data-s'); b.classList.toggle('bloqueado',!F[s]);
+  if(nuevos&&nuevos.indexOf(s)>=0){ b.classList.remove('recien'); void b.offsetWidth; b.classList.add('recien'); } }); }
+
+/* ---------- Notificación cuando el organizador desbloquea una sección ---------- */
+var AUD=null, colaAvisos=[], avisoAbierto=false;
+function prepararAudio(){ try{ if(!AUD) AUD=new (window.AudioContext||window.webkitAudioContext)(); if(AUD.state==='suspended') AUD.resume(); }catch(e){} }
+['pointerdown','touchend','keydown'].forEach(function(ev){ document.addEventListener(ev,prepararAudio,{passive:true}); });
+function campanita(){
+  if(!AUD) return; try{
+    var t=AUD.currentTime, g=AUD.createGain(); g.gain.value=0.6; g.connect(AUD.destination);
+    [523.25,659.25,783.99,1046.5].forEach(function(f,i){ var o=AUD.createOscillator(), e=AUD.createGain(); o.type='sine'; o.frequency.value=f;
+      e.gain.setValueAtTime(0.0001,t+i*0.11); e.gain.exponentialRampToValueAtTime(0.25,t+i*0.11+0.01); e.gain.exponentialRampToValueAtTime(0.0001,t+i*0.11+0.9);
+      o.connect(e); e.connect(g); o.start(t+i*0.11); o.stop(t+i*0.11+1); });
+  }catch(e){}
+}
+function notificar(s){ colaAvisos.push(s); if(!avisoAbierto) siguienteAviso(); }
+function siguienteAviso(){
+  var s=colaAvisos.shift(); if(!s){ avisoAbierto=false; return; } avisoAbierto=true;
+  var t=TILES.filter(function(x){return x.s===s;})[0];
+  var d=document.createElement('div'); d.className='ap-notif'; d.setAttribute('role','alertdialog'); d.setAttribute('aria-labelledby','apNotifT');
+  d.innerHTML='<div class="ap-notif-caja"><div class="ap-notif-cab">🔓 ¡NUEVO EN LA POSADA!</div><div class="ap-notif-ico">'+(s==='qr'?QR_ICONO:t.ico)+'</div>'+
+    '<h3 id="apNotifT">'+t.nTit+'</h3><p>'+t.nTxt+'</p><button class="boton" type="button" data-ir="1">Ir ahora</button><button class="boton secundario" type="button">Después</button></div>';
+  $('appPosada').appendChild(d); confeti(); campanita(); if(navigator.vibrate) try{navigator.vibrate([120,80,120]);}catch(e){}
+  if(document.hidden&&'Notification' in window&&Notification.permission==='granted'){ try{ new Notification('Posada Navideña',{body:t.nTit,icon:'apple-touch-icon.png'}); }catch(e){} }
+  var cerrar=function(ir){ d.remove(); if(ir){ colaAvisos=[]; avisoAbierto=false; abrir(s); } else siguienteAviso(); };
+  d.querySelectorAll('button').forEach(function(b){ b.onclick=function(){ cerrar(b.getAttribute('data-ir')==='1'); }; });
+  setTimeout(function(){ var y=d.querySelector('[data-ir]'); if(y) y.focus(); },50);
+}
 function abrir(s){
   var t=TILES.filter(function(x){return x.s===s;})[0];
   if(!F[s]){ aviso(t.off); return; }
@@ -1511,16 +1565,19 @@ function revisarModo(){
     if(!o) return;
     if(!activa){ if(o.app) mostrarApp(o); return; }
     if(o.app===false&&forzar!=='1'){ location.reload(); return; }
+    var nuevos=['qr','mural','premios'].filter(function(k){return !!o[k]&&!F[k];});
     var cambio=['qr','mural','premios'].some(function(k){return !!o[k]!==F[k];});
     F={qr:!!o.qr,mural:!!o.mural,premios:!!o.premios};
-    if(cambio){ pintarTiles(); }
+    if(cambio) pintarTiles(nuevos);
+    if(modoListo&&datos&&datos.nombre) nuevos.forEach(notificar);
+    modoListo=true;
   },function(){});
 }
 
 /* ---------- Encender / apagar la app ---------- */
 function mostrarApp(m){
   if(activa) return; activa=true;
-  if(m) F={qr:!!m.qr,mural:!!m.mural,premios:!!m.premios};
+  if(m){ F={qr:!!m.qr,mural:!!m.mural,premios:!!m.premios}; modoListo=true; }
   try{ if(window.apagarSonidoTelon) window.apagarSonidoTelon(); }catch(e){}
   window.__appActiva=true;
   ['teatro','sonido','refrescarTelon'].forEach(function(id){var el=$(id); if(el) el.style.display='none';});
@@ -1533,8 +1590,8 @@ function mostrarApp(m){
   setInterval(function(){ if(datos&&datos.nombre&&(vista==='inicio'||vista==='premios')) actualizar(); },10000);
 }
 $('apRefrescar').onclick=function(){ location.reload(); };
-if(forzar==='1'){ mostrarApp(null); revisarModo(); setInterval(revisarModo,20000); }
-else if(forzar!=='0'){ revisarModo(); setInterval(revisarModo,20000); }
+if(forzar==='1'){ mostrarApp(null); revisarModo(); setInterval(revisarModo,15000); }
+else if(forzar!=='0'){ revisarModo(); setInterval(revisarModo,15000); }
 addEventListener('resize',function(){ if(activa) esferas(); });
 })();
 </script>
