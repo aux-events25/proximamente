@@ -1447,7 +1447,7 @@ function registro(error){
       if(o&&o.confirmar){ confirmar(a,o.candidatos||[]); return; }
       if(!o||!o.nombre){ btn.disabled=false; btn.textContent='🎁 Unirme y sumar puntos'; $('apAyuda').textContent=(o&&o.error==='ocupado')?o.mensaje:'No se pudo registrar, intenta de nuevo.'; $('apAyuda').className='ayuda error'; return; }
       if(o.nuevaClave) guardarClave(o.nuevaClave);
-      datos=o; inicio({bono:o.nuevo?o.bono:0}); setTimeout(revisarLogros,2500);
+      datos=o; inicio({bono:o.nuevo?o.bono:0}); revisarLogros();
     },function(){ btn.disabled=false; btn.textContent='🎁 Unirme y sumar puntos'; aviso('Sin conexión. Intenta de nuevo.'); });
   }
   btn.onclick=enviar; inp.onkeydown=function(e){if(e.key==='Enter')enviar();};
@@ -1472,7 +1472,7 @@ var AV_OPC={
   f:[['verde','Pino'],['rojo','Rojo'],['dorado','Dorado'],['azul','Noche'],['nieve','Nieve']]};
 var AV_TIT={p:'Personaje',g:'Gorro navideño',l:'Lentes',a:'Accesorio',f:'Fondo'};
 var AV_FONDO={verde:['#2f9e62','#1f7a4d'],rojo:['#e02a45','#9a0b22'],dorado:['#f7d774','#d9a53a'],azul:['#3b5ba5','#1d2f5e'],nieve:['#e8f3fa','#b9d4e6']};
-function avDef(){ return {p:'elfo',g:'santa',l:'ninguno',a:'bufanda',f:'verde'}; }
+function avDef(){ return {p:'usuario',g:'santa',l:'ninguno',a:'ninguno',f:'nieve'}; }
 function avLeer(){ try{ var o=JSON.parse(localStorage.getItem('posada_avatar')||'null'); if(o&&o.p) return Object.assign(avDef(),o); }catch(e){} return avDef(); }
 function avGuardar(o){ try{ localStorage.setItem('posada_avatar',JSON.stringify(o)); }catch(e){} }
 var avN=0;
@@ -1480,6 +1480,11 @@ function avatarSVG(c){
   var id='av'+(++avN), F=AV_FONDO[c.f]||AV_FONDO.verde, s='';
   s+='<svg viewBox="0 0 120 120" class="ap-av" aria-hidden="true"><defs><radialGradient id="'+id+'g" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="'+F[0]+'"/><stop offset="1" stop-color="'+F[1]+'"/></radialGradient>'+
      '<clipPath id="'+id+'c"><circle cx="60" cy="60" r="58"/></clipPath></defs><g clip-path="url(#'+id+'c)"><rect width="120" height="120" fill="url(#'+id+'g)"/>';
+  if(c.p==='usuario'){   // ícono de usuario genérico (hasta que lo personalicen)
+    s+='<path d="M14 124 Q16 92 60 90 Q104 92 106 124Z" fill="#9aa5b2"/><circle cx="60" cy="64" r="26" fill="#b6c0cc"/>';
+    if(c.g==='santa') s+='<path d="M30 50 Q34 18 66 20 Q92 22 96 46 L86 50 Q82 34 70 33 Q78 42 82 50Z" fill="#c8102e"/><rect x="27" y="44" width="66" height="13" rx="6.5" fill="#fff"/><circle cx="94" cy="48" r="7.5" fill="#fff"/>';
+    return s+'</g></svg>';
+  }
   var piel={elfo:'#f6c9a8',santa:'#f6c9a8',reno:'#a86b3c',muneco:'#ffffff',pinguino:'#1f2a36',galleta:'#c47a3e'}[c.p]||'#f6c9a8';
   // detrás de la cabeza
   if(c.p==='reno'&&c.g!=='diadema') s+='<path d="M44 44 L36 20 M38 28 L28 24 M37 24 L40 12 M76 44 L84 20 M82 28 L92 24 M83 24 L80 12" stroke="#7d4a25" stroke-width="5" stroke-linecap="round" fill="none"/>';
@@ -1526,7 +1531,7 @@ function editorAvatar(){
     '<button class="boton secundario" id="apAvAzar" type="button">🎲 Sorpréndeme</button></section>');
   pintarGrupos();
   $('apVolver').onclick=function(){ inicio({}); };
-  $('apAvOk').onclick=function(){ avGuardar(avEdit); aviso('¡Listo! Tu avatar quedó guardado 🎄'); inicio({}); setTimeout(revisarLogros,800); };
+  $('apAvOk').onclick=function(){ avGuardar(avEdit); aviso('¡Listo! Tu avatar quedó guardado 🎄'); inicio({}); revisarLogros(); };
   $('apAvAzar').onclick=function(){ Object.keys(AV_OPC).forEach(function(k){ var o=AV_OPC[k]; avEdit[k]=o[Math.floor(Math.random()*o.length)][0]; }); pintarGrupos(); };
 }
 function pintarGrupos(){
@@ -1578,7 +1583,9 @@ var LOGROS=[
 var LG={progreso:{},ok:{}}, lgListo=false;
 function lgGuardados(){ try{ return JSON.parse(localStorage.getItem('posada_logros')||'null'); }catch(e){ return null; } }
 function lgGuardar(o){ try{ localStorage.setItem('posada_logros',JSON.stringify(o)); }catch(e){} }
-function avatarPropio(){ try{ var a=localStorage.getItem('posada_avatar'); return !!a && a!==JSON.stringify(avDef()); }catch(e){ return false; } }
+function avatarPropio(){ try{ var a=localStorage.getItem('posada_avatar'); return !!a && JSON.parse(a).p!=='usuario'; }catch(e){ return false; } }
+function fotosLocales(){ try{ return Number(localStorage.getItem('posada_fotos'))||0; }catch(e){ return 0; } }
+function subidaMural(){ try{ localStorage.setItem('posada_fotos',String(fotosLocales()+1)); }catch(e){} revisarLogros(); }
 function contarFotos(apodo,listo){
   if(!apodo){ listo(0); return; }
   fetch(SB_MURAL.url+'/rest/v1/mural_fotos?select=id&nombre=ilike.'+encodeURIComponent(apodo),{headers:{apikey:SB_MURAL.key}})
@@ -1590,7 +1597,7 @@ function revisarLogros(){
     if(!o||!o.registrado) return;
     contarFotos(o.apodo||datos.nombre,function(fotos){
       var prev=LG.progreso.fotografo||0;
-      var p={dentro:1,coleccionista:o.codigos||0,fotografo:fotos==null?prev:fotos,infiltrado:o.secreto?1:0,mision:o.mision?1:0,
+      var p={dentro:1,coleccionista:o.codigos||0,fotografo:Math.max(fotos==null?prev:fotos,fotosLocales()),infiltrado:o.secreto?1:0,mision:o.mision?1:0,
              estilista:avatarPropio()?1:0,jugador:Number(o.ganados)||0,magnate:o.magnate?1:0};
       var guard=lgGuardados(), nuevos=[];
       LOGROS.forEach(function(l){ var ok=p[l.id]>=(l.meta||1) || !!(guard&&guard[l.id]); if(ok&&!(guard&&guard[l.id])) nuevos.push(l); LG.ok[l.id]=ok; });
@@ -1635,7 +1642,7 @@ function cargarReto(pintar){
     if(!o) return;
     if(o.activo===false){ if(vista==='reto') $('apReto').innerHTML='<section class="tarjeta"><p class="ap-mini">Tu bonus todavía no está disponible. 🎄</p></section>'; return; }
     var antes=RETO&&RETO.estado; RETO=o;
-    if(antes==='revision'&&o.estado==='aprobado'){ confeti(); aviso('🎉 ¡Misión cumplida! +'+o.puntos+' puntos'); actualizar(); }
+    if(antes==='revision'&&o.estado==='aprobado'){ confeti(); aviso('🎉 ¡Misión cumplida! +'+o.puntos+' puntos'); actualizar(); revisarLogros(); }
     if(antes==='revision'&&o.estado==='rechazado'){ aviso('📸 Tu foto necesita un ajuste. Revisa el comentario.'); }
     if(vista==='reto'&&(pintar||antes!==o.estado)) pintarReto();
   },function(){ if(vista==='reto'&&pintar) $('apReto').innerHTML='<section class="tarjeta"><p class="ap-mini">Sin conexión. Toca ↻ para intentar de nuevo.</p></section>'; });
@@ -1712,6 +1719,47 @@ function miResumen(){
   llamar({api:'logros',clave:clave()},function(o){ D.logros=o||{}; fin(); },function(){ D.logros={}; fin(); });
   llamar({api:'premios',clave:clave()},function(o){ D.premios=(o&&o.canjes)||[]; fin(); },function(){ D.premios=[]; fin(); });
 }
+function tituloResumen(c,cx){
+  // ---- cinta roja "ASÍ FUE" ----
+  var by=640, bw=440, bh=60;
+  c.save(); c.shadowColor='rgba(0,0,0,.35)'; c.shadowBlur=12; c.shadowOffsetY=5;
+  [[-1],[1]].forEach(function(s){ var x=cx+s[0]*(bw/2+8); c.fillStyle='#8e0c20'; c.beginPath();
+    c.moveTo(x,by+10); c.lineTo(x+s[0]*58,by+10); c.lineTo(x+s[0]*40,by+bh/2+10); c.lineTo(x+s[0]*58,by+bh+10); c.lineTo(x,by+bh+10); c.closePath(); c.fill(); });
+  var gr=c.createLinearGradient(0,by,0,by+bh); gr.addColorStop(0,'#e8283f'); gr.addColorStop(1,'#a50e24');
+  c.fillStyle=gr; c.beginPath(); c.moveTo(cx-bw/2,by); c.quadraticCurveTo(cx,by-14,cx+bw/2,by); c.lineTo(cx+bw/2,by+bh); c.quadraticCurveTo(cx,by+bh-14,cx-bw/2,by+bh); c.closePath(); c.fill();
+  c.restore();
+  c.strokeStyle='rgba(242,193,78,.85)'; c.lineWidth=2.5; c.setLineDash([7,6]); c.beginPath(); c.moveTo(cx-bw/2+14,by+9); c.quadraticCurveTo(cx,by-4,cx+bw/2-14,by+9); c.stroke();
+  c.beginPath(); c.moveTo(cx-bw/2+14,by+bh-9); c.quadraticCurveTo(cx,by+bh-22,cx+bw/2-14,by+bh-9); c.stroke(); c.setLineDash([]);
+  c.font='900 34px Nunito'; c.textAlign='center'; c.fillStyle='#fff'; if('letterSpacing' in c) c.letterSpacing='9px';
+  c.fillText('✦ ASÍ FUE ✦',cx+4,by+bh/2+5); if('letterSpacing' in c) c.letterSpacing='0px';
+  // ---- "MI POSADA" con bastón de caramelo, relieve y nieve ----
+  var t='MI POSADA', y=808, f='122px "Luckiest Guy"';
+  c.font=f; c.textAlign='center'; c.lineJoin='round';
+  for(var d=12;d>0;d-=2){ c.fillStyle=d>6?'#4a0410':'#7a0a1c'; c.fillText(t,cx,y+d); }      // relieve 3D
+  c.lineWidth=22; c.strokeStyle='#fff'; c.strokeText(t,cx,y);
+  c.lineWidth=11; c.strokeStyle='#c8102e'; c.strokeText(t,cx,y);
+  var oro=c.createLinearGradient(0,y-100,0,y+6); oro.addColorStop(0,'#fffbe6'); oro.addColorStop(.45,'#f7d774'); oro.addColorStop(1,'#d9a53a');
+  c.fillStyle=oro; c.fillText(t,cx,y);
+  var brillo=c.createLinearGradient(0,y-100,0,y-40); brillo.addColorStop(0,'rgba(255,255,255,.55)'); brillo.addColorStop(1,'rgba(255,255,255,0)');
+  c.fillStyle=brillo; c.fillText(t,cx,y);
+  // nieve sobre las letras (solo en algunas partes)
+  var o=document.createElement('canvas'); o.width=1080; o.height=200; var g=o.getContext('2d'); g.font=f; g.textAlign='center'; g.lineJoin='round'; g.lineWidth=22; g.strokeStyle='#000'; g.strokeText(t,540,170); g.fillText(t,540,170);
+  var px=g.getImageData(0,0,1080,200).data, az=function(i){ var s=Math.sin(i*91.37)*43758.5453; return s-Math.floor(s); };
+  for(var x=0;x<1080;x+=5){ for(var yy=10;yy<190;yy++){ if(px[(yy*1080+x)*4+3]>120){
+      var X=cx-540+x, Y=y-170+yy; if(az(x)>.5){ var rx=5+az(x+3)*5, ry=3+az(x+9)*2.5;
+        c.fillStyle='#cfe3f0'; c.beginPath(); c.ellipse(X,Y+3,rx,ry,0,0,7); c.fill(); c.fillStyle='#fff'; c.beginPath(); c.ellipse(X,Y+1,rx,ry*.85,0,0,7); c.fill(); }
+      break; } } }
+  // ---- acebo a los lados y destellos ----
+  [[cx-420,y-42,-1],[cx+420,y-42,1]].forEach(function(a){
+    c.save(); c.translate(a[0],a[1]); c.scale(a[2],1);
+    c.fillStyle='#1f7a4d'; c.beginPath(); c.ellipse(-16,-6,26,11,-.5,0,7); c.fill(); c.fillStyle='#2f9e62'; c.beginPath(); c.ellipse(14,-12,26,11,.6,0,7); c.fill();
+    c.strokeStyle='#145c39'; c.lineWidth=2; c.beginPath(); c.moveTo(-36,6); c.lineTo(4,-16); c.moveTo(-4,-2); c.lineTo(34,-24); c.stroke();
+    [[0,4],[12,10],[-10,12]].forEach(function(b){ c.fillStyle='#c8102e'; c.beginPath(); c.arc(b[0],b[1],8,0,7); c.fill(); c.fillStyle='rgba(255,255,255,.6)'; c.beginPath(); c.arc(b[0]-2.5,b[1]-2.5,2.4,0,7); c.fill(); });
+    c.restore(); });
+  [[cx-300,646,10],[cx+305,652,8],[cx-460,720,6],[cx+465,716,7]].forEach(function(s){
+    c.fillStyle='#fff3c4'; c.beginPath(); for(var k=0;k<8;k++){ var r=k%2?s[2]*.35:s[2], a=k*Math.PI/4; c.lineTo(s[0]+r*Math.cos(a),s[1]+r*Math.sin(a)); } c.closePath(); c.fill(); });
+}
+
 function tituloNevado(c,t,cx,y){
   // letras blancas delgadas con un poco de nieve encima
   var f='300 92px Nunito', o=document.createElement('canvas'); o.width=1080; o.height=220; var g=o.getContext('2d');
@@ -1751,9 +1799,9 @@ function dibujarResumen(D,termina){
       c.fillStyle='#d4a63a'; c.fillRect(x-8,L,16,14); c.fillStyle=col[k%5]; c.beginPath(); c.arc(x,L+14+r,r,0,7); c.fill(); c.fillStyle='rgba(255,255,255,.6)'; c.beginPath(); c.ellipse(x-r*.38,L+14+r*.6,r*.28,r*.18,0,0,7); c.fill(); }
     var esSvg=escenaSVG().replace(/(<text id="ltr[12]"[^>]*>)[^<]*(<\/text>)/g,'$1$2');
     svgAImagen(esSvg,function(esc){
-      var dx=50, dy=190, dw=980, s=dw/452;
-      if(esc){ c.drawImage(esc,dx,dy,dw,516); letreroCanvas(c,dx,dy,s); }
-      tituloNevado(c,'¡Así fue mi posada!',W/2,808);
+      var dx=90, dy=124, dw=900, s=dw/452;
+      if(esc){ c.drawImage(esc,dx,dy,dw,dw*238/452); letreroCanvas(c,dx,dy,s); }
+      tituloResumen(c,W/2);
       // tarjeta del jugador (solo saludo y apodo)
       tarjeta(c,60,860,960,220);
       svgAImagen(avatarSVG(avLeer()).replace('<svg','<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"'),function(av){
@@ -1833,7 +1881,7 @@ function inicio(op){
   poner((F.terminado?'<div class="ap-fin" role="status"><b>🔔 ¡La posada terminó!</b><span>Ya no puedes sumar más puntos. ¡Úsalos en la subasta!</span></div>':'')+
     (op.aviso?'<p class="ap-ultimo">'+esc(op.aviso)+'</p>':'')+
     '<section class="tarjeta"><div class="ap-jugador"><button class="ap-avatarbtn" id="apAvatar" type="button" aria-label="Personalizar mi avatar">'+avatarSVG(avLeer())+'<span class="ap-lapiz" aria-hidden="true">✏️</span></button>'+
-    '<div><div class="ap-hola">¡Feliz Navidad,</div><div class="ap-nombre">'+esc(d.nombre)+'!</div><div class="ap-id">Tu ID: '+esc(d.id||'')+'</div><div class="ap-tipav">Toca tu avatar para personalizarlo</div></div></div>'+
+    '<div><div class="ap-hola">¡Feliz Navidad,</div><div class="ap-nombre">'+esc(d.nombre)+'!</div><div class="ap-id">Tu ID: '+esc(d.id||'')+'</div>'+(avatarPropio()?'':'<div class="ap-tipav">✨ Personaliza tu avatar</div>')+'</div></div>'+
     '<div class="ap-puntos"><b id="apPts">'+fmt(d.total)+'</b><span>puntos disponibles</span></div>'+
     '<p class="ap-mini" id="apMini">'+mini(d)+'</p><div id="apBono"></div>'+
     '<button class="ap-logrosbtn" id="apLogrosBtn" type="button">🏅 Mis logros <b>'+(lgListo?(lgCuenta()+' / '+LOGROS.length):'…')+'</b><span aria-hidden="true">›</span></button>'+
@@ -1962,7 +2010,7 @@ function resultado(o,desde){
       ? '<button class="boton" id="apVer" type="button">🏠 Volver a mi menú</button><p class="nota" id="apCuenta">Regresas a tu menú en 20 segundos…</p>'
       : '<button class="boton" id="apVer" type="button">⭐ Ver mis puntos</button><button class="boton secundario" id="apOtro" type="button">📷 Escanear otro código</button>'));
   if(tipo==='ok') confeti();
-  setTimeout(revisarLogros,1500);
+  revisarLogros();
   var listo=false, ir=function(){ if(listo||vista!=='resultado') return; listo=true;
     inicio({aviso:tipo==='ok'?AVISOS.ok+': '+String(o.titulo||'').replace(/[¡!]/g,''):AVISOS[tipo], desde:tipo==='ok'?desde:null}); };
   $('apVer').onclick=ir;
@@ -1983,9 +2031,14 @@ function mural(){
   f.srcdoc=MURAL_HTML; cont.appendChild(f);
   var v=document.createElement('button'); v.type='button'; v.className='ap-volver ap-volver-mural'; v.textContent='⬅ Menú'; v.onclick=cerrarMural; cont.appendChild(v);
   document.body.appendChild(cont);
-  f.onload=function(){ try{ ['nombre','cartaFirma'].forEach(function(id){ var n=f.contentDocument.getElementById(id); if(n&&datos&&datos.nombre){ n.value=datos.nombre; n.dispatchEvent(new Event('input')); } }); }catch(e){} };
+  f.onload=function(){
+    // cada vez que el mural guarda una foto o carta, se cuenta para el logro del fotógrafo
+    try{ var fw=f.contentWindow, orig=fw.fetch.bind(fw);
+      fw.fetch=function(u,o){ return orig(u,o).then(function(r){ try{ if(r.ok&&o&&String(o.method).toUpperCase()==='POST'&&/\/rest\/v1\/mural_fotos/.test(String(u))) subidaMural(); }catch(e){} return r; }); };
+    }catch(e){}
+    try{ ['nombre','cartaFirma'].forEach(function(id){ var n=f.contentDocument.getElementById(id); if(n&&datos&&datos.nombre){ n.value=datos.nombre; n.dispatchEvent(new Event('input')); } }); }catch(e){} };
 }
-function cerrarMural(){ var m=$('apMural'); if(m) m.remove(); inicio({}); setTimeout(revisarLogros,1500); }
+function cerrarMural(){ var m=$('apMural'); if(m) m.remove(); inicio({}); revisarLogros(); }
 addEventListener('message',function(e){ if(e.data&&e.data.portal==='menu'&&$('apMural')) cerrarMural(); });
 
 /* ---------- Premios ---------- */
@@ -2016,8 +2069,9 @@ var canjesVistos=null;
 function actualizar(){
   llamar({api:'estado',clave:clave()},function(o){
     if(!o||!o.nombre) return;
-    var antes=Number((datos||{}).total||0), nuevos=Number(o.canjes||0);
+    var antes=Number((datos||{}).total||0), nuevos=Number(o.canjes||0), cambio=antes!==Number(o.total||0)||Number((datos||{}).ganados||0)!==Number(o.ganados||0)||nuevos!==canjesVistos;
     datos=Object.assign(datos||{},o);
+    if(cambio) revisarLogros();
     if(canjesVistos!==null&&nuevos>canjesVistos){
       llamar({api:'premios',clave:clave()},function(p){ var u=(p&&p.canjes&&p.canjes[0])||{}; if(vista==='inicio') inicio({premio:u.producto||'un premio',desde:antes}); else aviso('🎁 ¡Ganaste '+(u.producto||'un premio')+' en la subasta!'); },function(){});
     } else if(vista==='inicio'){ contador($('apPts'),antes,Number(o.total||0)); var m=$('apMini'); if(m) m.innerHTML=mini(o); }
@@ -2028,6 +2082,15 @@ function actualizar(){
 function revisarModo(){
   llamar({api:'modo'},function(o){
     if(!o) return;
+    if(o.reinicio!==undefined){
+      var r0=null; try{ r0=localStorage.getItem('posada_reinicio'); }catch(e){}
+      if(r0===null){ try{ localStorage.setItem('posada_reinicio',o.reinicio||''); }catch(e){} }
+      else if(r0!==(o.reinicio||'')){
+        try{ ['posada_logros','posada_avatar','posada_fotos','posada_jugador'].forEach(function(k){ localStorage.removeItem(k); });
+             document.cookie='posada_jugador=; max-age=0; path=/'; localStorage.setItem('posada_reinicio',o.reinicio||''); }catch(e){}
+        location.reload(); return;
+      }
+    }
     if(!activa){ if(o.app) mostrarApp(o); return; }
     if(o.app===false&&forzar!=='1'){ location.reload(); return; }
     var nuevos=['qr','mural','premios','reto'].filter(function(k){return !!o[k]&&!F[k];});
@@ -2053,7 +2116,8 @@ function mostrarApp(m){
     if(o&&o.evento){ ponerLetrero(o.evento); }
     if(o&&o.nombre){ datos=o; canjesVistos=Number(o.canjes||0); inicio({}); revisarLogros(); } else registro();
   },function(){ registro(); });
-  setInterval(function(){ if(datos&&datos.nombre&&(vista==='inicio'||vista==='premios')) actualizar(); },10000);
+  setInterval(function(){ if(datos&&datos.nombre&&!document.hidden&&vista!=='qr'&&vista!=='mural') actualizar(); },8000);
+  setInterval(function(){ if(datos&&datos.nombre&&!document.hidden) revisarRetoFondo(); },10000);
   setInterval(function(){ if(datos&&datos.nombre&&vista!=='qr'&&vista!=='mural'){ revisarLogros(); revisarRetoFondo(); } },30000);
 }
 $('apRefrescar').onclick=function(){ location.reload(); };
