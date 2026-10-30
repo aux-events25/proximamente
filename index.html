@@ -420,6 +420,16 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:Nunit
 .ap-res-caja p{margin:10px 4px 4px;color:#6e5f61;font-weight:700;font-size:14px}
 
 #versionPagina{position:fixed;left:8px;bottom:calc(4px + env(safe-area-inset-bottom));z-index:60;font:700 10px Nunito,sans-serif;color:rgba(255,255,255,.35);pointer-events:none}
+
+.ap-fin-din{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.8);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:grid;place-items:center;padding:24px;animation:apFinEntra .3s ease}
+@keyframes apFinEntra{from{opacity:0}to{opacity:1}}
+.ap-fin-x{position:absolute;top:calc(16px + env(safe-area-inset-top));right:16px;width:50px;height:50px;border-radius:50%;border:2px solid rgba(255,255,255,.55);background:rgba(255,255,255,.12);color:#fff;font:900 22px Nunito,sans-serif;cursor:pointer}
+.ap-fin-x:focus-visible{outline:3px solid #f2c14e;outline-offset:3px}
+.ap-fin-c{text-align:center;color:#fff;max-width:420px}
+.ap-fin-ico{font-size:84px;line-height:1;animation:apFinBota 1.6s ease-in-out infinite}
+@keyframes apFinBota{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.ap-fin-c h2{margin:14px 0 10px;font-family:"Luckiest Guy",sans-serif;font-weight:400;font-size:40px;line-height:1.05;letter-spacing:.02em;text-shadow:0 4px 0 #c8102e}
+.ap-fin-c p{margin:0;font:800 20px/1.45 Nunito,sans-serif;color:#ffe08a}
 </style>
 </head>
 <body>
@@ -2001,7 +2011,7 @@ function leido(txt){
   if(navigator.vibrate) try{navigator.vibrate(60);}catch(e){}
   procesar(c);
 }
-var ICONOS={ok:'🎁',repetido:'⛄',expirado:'⏰',agotado:'🦌',invalido:'❓',error:'⚠️',terminado:'🔔',vacio:'📦',ocupado:'⏳'};
+var ICONOS={ok:'🎁',repetido:'⛄',expirado:'⏰',agotado:'🦌',invalido:'❓',error:'⚠️',terminado:'🔔',vacio:'📦',ocupado:'⏳',rmfin:'🎁'};
 var AVISOS={ok:'Último código',repetido:'Ese QR ya lo tenías',expirado:'Ese código ya cerró',agotado:'Ese código ya se agotó',invalido:'Ese código no es válido para la dinámica',terminado:'La posada terminó: usa tus puntos en la subasta',vacio:'Esa caja estaba vacía: ¡sigue buscando!',ocupado:'Había mucha gente: vuelve a escanear ese código'};
 function procesar(codigo){
   detenerCamara(); vista='revisando'; verEscena('leyendo');
@@ -2012,12 +2022,23 @@ function procesar(codigo){
     resultado(o,desde);
   },function(){ aviso('Sin conexión. Intenta de nuevo.'); escaner(); });
 }
+// Pantalla grande (negro tenue) cuando ya se encontraron todos los premios del regalo misterioso
+function finDinamica(o){
+  if(o.nombre) datos=Object.assign(datos||{},o);
+  inicio({});
+  var d=document.createElement('div'); d.className='ap-fin-din'; d.setAttribute('role','dialog'); d.setAttribute('aria-modal','true'); d.setAttribute('aria-labelledby','apFinT');
+  d.innerHTML='<button type="button" class="ap-fin-x" aria-label="Cerrar">✕</button><div class="ap-fin-c"><div class="ap-fin-ico" aria-hidden="true">🎁</div>'+
+    '<h2 id="apFinT">¡Se acabaron los códigos QR!</h2><p>Gracias por participar.<br>Espera la próxima dinámica 🎄</p></div>';
+  $('appPosada').appendChild(d);
+  var x=d.querySelector('.ap-fin-x'); x.onclick=function(){ d.remove(); }; x.focus();
+}
 function resultado(o,desde){
   vista='resultado'; var tipo=o.tipo||'error';
-  if(tipo==='repetido'){ o.titulo='Ya tienes este QR'; o.sub='Cada QR suma una sola vez.'; }
+  if(tipo==='repetido'&&!/din[aá]mica|regalo/i.test(o.titulo||'')){ o.titulo='Ya tienes este QR'; o.sub='Cada QR suma una sola vez.'; }
+  if(tipo==='rmfin'){ finDinamica(o); return; }
   if(tipo==='ok'&&(!o.sub||o.sub==='¡Sigue buscando!')) o.sub='¡Sigue sumando puntos!';
   if(o.nombre){ datos=Object.assign(datos||{},o); }
-  verEscena(tipo==='ok'||tipo==='repetido'?tipo:'normal');
+  verEscena(tipo==='ok'||(tipo==='repetido'&&!/din[aá]mica/i.test(o.titulo||''))?tipo:'normal');
   poner('<div class="estado grande '+tipo+'" role="status">'+(tipo==='ok'?'<span class="timbre" aria-hidden="true">🎄</span>':'')+
     '<div class="ico">'+(ICONOS[tipo]||'⭐')+'</div><div><div class="t">'+esc(o.titulo||'Algo salió mal')+'</div>'+(o.sub?'<div class="s">'+esc(o.sub)+'</div>':'')+'</div></div>'+
     (tipo==='terminado'
