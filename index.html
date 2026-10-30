@@ -15,7 +15,7 @@
 <meta property="og:title" content="¡Algo se está construyendo!">
 <meta property="og:description" content="Posada Navideña · 27 de noviembre">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Mountains+of+Christmas:wght@700&family=Saira+Condensed:wght@700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Mountains+of+Christmas:wght@700&family=Saira+Condensed:wght@700&family=Nunito:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:Nunito,system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
@@ -406,6 +406,15 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:Nunit
 .ap-logro.ok .ap-medalla svg{width:54px;height:54px;filter:none;opacity:1}
 .ap-candado{position:absolute;right:-4px;bottom:-4px;width:26px;height:26px;border-radius:50%;background:#2a2a2e;display:grid;place-items:center;font-size:13px;border:2px solid rgba(255,255,255,.2)}
 .ap-lgnotif svg{width:62px;height:62px}
+
+.ap-resumenbtn{display:block;margin:10px auto 0;border:0;background:none;color:#1f7a4d;font:900 15px Nunito,sans-serif;cursor:pointer;padding:6px 10px;border-radius:999px;
+  text-decoration:underline;text-decoration-color:rgba(31,122,77,.35);text-underline-offset:4px}
+.ap-resumenbtn:hover{background:#eef7f1}.ap-resumenbtn:focus-visible{outline:3px solid #f2c14e;outline-offset:2px}
+.ap-resumenbtn[disabled]{opacity:.6}
+.ap-resumen{align-items:start;overflow:auto}
+.ap-res-caja{width:min(92vw,420px);margin:16px auto;background:#fffaf3;border-radius:22px;padding:14px;text-align:center;box-shadow:0 26px 50px -18px rgba(0,0,0,.8)}
+.ap-res-caja img{display:block;width:100%;border-radius:14px;-webkit-touch-callout:default}
+.ap-res-caja p{margin:10px 4px 4px;color:#6e5f61;font-weight:700;font-size:14px}
 </style>
 </head>
 <body>
@@ -1671,6 +1680,135 @@ function enviarFoto(){
 }
 function revisarRetoFondo(){ if(F.reto&&RETO&&RETO.estado==='revision'&&vista!=='reto') cargarReto(false); }
 
+/* ---------- 📲 Mi resumen de la posada (imagen tamaño historia) ---------- */
+function svgAImagen(svg,listo){
+  var img=new Image(); img.onload=function(){ listo(img); }; img.onerror=function(){ listo(null); };
+  img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+}
+function escenaSVG(){
+  var defs=document.querySelector('#appPosada svg[width="0"] defs'), esc=$('ap-escena-normal');
+  if(!defs||!esc) return '';
+  var s=esc.outerHTML.replace(/\sclass="[^"]*"/g,'').replace(/\srole="[^"]*"/g,'');
+  s=s.replace('<svg','<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1356" height="714"');
+  s=s.replace(/(<svg[^>]*>)/,'$1<defs>'+defs.innerHTML.replace(/'Saira Condensed',\s*sans-serif/g,"'Helvetica Neue',Arial,sans-serif")+'</defs>');
+  return s.replace(/style="[^"]*display:\s*none[^"]*"/g,'');
+}
+function rrect(c,x,y,w,h,r){ c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); }
+function texto(c,t,x,y,font,color,align,max){ c.font=font; c.fillStyle=color; c.textAlign=align||'left'; c.textBaseline='alphabetic'; if(max) c.fillText(t,x,y,max); else c.fillText(t,x,y); }
+function franja(c,x,y,w,h){ c.save(); rrect(c,x,y,w,h+30,30); c.clip(); for(var i=-h;i<w+h;i+=28){ c.fillStyle='#c8102e'; c.beginPath(); c.moveTo(x+i,y+h); c.lineTo(x+i+14,y+h); c.lineTo(x+i+14+h,y); c.lineTo(x+i+h,y); c.fill(); } c.restore(); }
+function tarjeta(c,x,y,w,h){ c.save(); c.shadowColor='rgba(0,0,0,.35)'; c.shadowBlur=30; c.shadowOffsetY=12; rrect(c,x,y,w,h,30); c.fillStyle='#fffaf3'; c.fill(); c.restore(); franja(c,x,y,w,14); }
+function miResumen(){
+  var b=$('apResumenBtn'); if(b){ b.disabled=true; b.textContent='Preparando tu resumen…'; }
+  var listo=function(){ if(b){ b.disabled=false; b.innerHTML='📲 Mi resumen de la posada'; } };
+  var D={}, pend=3, fin=function(){ if(--pend>0) return; dibujarResumen(D,function(ok){ listo(); if(!ok) aviso('No se pudo crear la imagen. Intenta de nuevo.'); }); };
+  llamar({api:'estado',clave:clave()},function(o){ D.estado=o||{}; fin(); },function(){ D.estado=datos||{}; fin(); });
+  llamar({api:'logros',clave:clave()},function(o){ D.logros=o||{}; fin(); },function(){ D.logros={}; fin(); });
+  llamar({api:'premios',clave:clave()},function(o){ D.premios=(o&&o.canjes)||[]; fin(); },function(){ D.premios=[]; fin(); });
+}
+function tituloNevado(c,t,cx,y){
+  // letras blancas delgadas con un poco de nieve encima
+  var f='300 92px Nunito', o=document.createElement('canvas'); o.width=1080; o.height=220; var g=o.getContext('2d');
+  g.font=f; g.textAlign='center'; g.textBaseline='alphabetic'; g.fillStyle='#fff'; if('letterSpacing' in g) g.letterSpacing='3px'; g.fillText(t,540,150);
+  var px=g.getImageData(0,0,o.width,o.height).data, cimas=[];
+  for(var x=0;x<o.width;x+=7){ for(var yy=20;yy<200;yy++){ if(px[(yy*o.width+x)*4+3]>140){ cimas.push([x,yy]); break; } } }
+  c.save(); c.shadowColor='rgba(0,0,0,.35)'; c.shadowBlur=14; c.shadowOffsetY=4; c.drawImage(o,cx-540,y-150); c.restore();
+  var azar=function(i){ var s=Math.sin(i*12.9898)*43758.5453; return s-Math.floor(s); };
+  cimas.forEach(function(p,i){
+    if(azar(i)<0.45) return;
+    var x=cx-540+p[0], yy=y-150+p[1], rx=4+azar(i+7)*5, ry=2.5+azar(i+3)*2.5;
+    c.fillStyle='#dbe9f3'; c.beginPath(); c.ellipse(x,yy+1.5,rx,ry,0,0,7); c.fill();
+    c.fillStyle='#ffffff'; c.beginPath(); c.ellipse(x,yy,rx,ry,0,0,7); c.fill();
+  });
+}
+function letreroCanvas(c,dx,dy,s){
+  [['ltr1',-5,-31,74],['ltr2',4,-31,128]].forEach(function(q){
+    var el=document.getElementById(q[0]); if(!el) return;
+    var t=el.textContent, fs=parseFloat(el.getAttribute('font-size'))||22, ls=parseFloat(el.getAttribute('letter-spacing'))||0;
+    var x=parseFloat(el.getAttribute('x')), y=parseFloat(el.getAttribute('y'));
+    c.save(); c.translate(dx+(q[2]+92)*s, dy+q[3]*s); c.rotate(q[1]*Math.PI/180); c.translate(-(q[2]+92)*s,-q[3]*s);
+    c.font='700 '+(fs*s)+'px "Saira Condensed"'; c.textAlign='center'; c.textBaseline='alphabetic'; if('letterSpacing' in c) c.letterSpacing=(ls*s)+'px';
+    c.lineJoin='round'; c.lineWidth=2*s*1.6; c.strokeStyle='#4a2a14'; c.strokeText(t,(x+92)*s,y*s); c.fillStyle='#fff'; c.fillText(t,(x+92)*s,y*s);
+    c.restore();
+  });
+}
+function dibujarResumen(D,termina){
+  var W=1080,H=1920,cv=document.createElement('canvas'); cv.width=W; cv.height=H; var c=cv.getContext('2d');
+  var e=D.estado||{}, lg=D.logros||{}, pr=D.premios||[];
+  var ganados=Number(e.ganados!=null?e.ganados:e.total)||0, resto=Number(e.total)||0, canjeados=Math.max(0,ganados-resto);
+  var fuentes=['72px "Luckiest Guy"','900 40px Nunito','300 80px Nunito','700 30px "Saira Condensed"'];
+  Promise.all(fuentes.map(function(f){ return document.fonts?document.fonts.load(f).catch(function(){}):Promise.resolve(); })).then(function(){
+    var g=c.createRadialGradient(W/2,200,80,W/2,700,1500); g.addColorStop(0,'#1a6b47'); g.addColorStop(.5,'#0f4d32'); g.addColorStop(1,'#0a3324'); c.fillStyle=g; c.fillRect(0,0,W,H);
+    for(var i=0;i<90;i++){ c.fillStyle='rgba(255,255,255,'+(0.25+Math.random()*0.5)+')'; c.beginPath(); c.arc(Math.random()*W,Math.random()*H,1.5+Math.random()*3.5,0,7); c.fill(); }
+    var col=['#c8102e','#f2c14e','#2f9e62','#ffffff','#d9dde3'];
+    for(var k=0;k<11;k++){ var x=50+k*98, L=[30,70,22,90,40,60,26,80,36,56,30][k], r=18+(k%3)*5; c.strokeStyle='#f2c14e'; c.lineWidth=2.5; c.beginPath(); c.moveTo(x,0); c.lineTo(x,L); c.stroke();
+      c.fillStyle='#d4a63a'; c.fillRect(x-8,L,16,14); c.fillStyle=col[k%5]; c.beginPath(); c.arc(x,L+14+r,r,0,7); c.fill(); c.fillStyle='rgba(255,255,255,.6)'; c.beginPath(); c.ellipse(x-r*.38,L+14+r*.6,r*.28,r*.18,0,0,7); c.fill(); }
+    var esSvg=escenaSVG().replace(/(<text id="ltr[12]"[^>]*>)[^<]*(<\/text>)/g,'$1$2');
+    svgAImagen(esSvg,function(esc){
+      var dx=50, dy=190, dw=980, s=dw/452;
+      if(esc){ c.drawImage(esc,dx,dy,dw,516); letreroCanvas(c,dx,dy,s); }
+      tituloNevado(c,'¡Así fue mi posada!',W/2,808);
+      // tarjeta del jugador (solo saludo y apodo)
+      tarjeta(c,60,860,960,220);
+      svgAImagen(avatarSVG(avLeer()).replace('<svg','<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"'),function(av){
+        if(av){ c.save(); c.beginPath(); c.arc(190,975,90,0,7); c.closePath(); c.fillStyle='#f2c14e'; c.fill(); c.beginPath(); c.arc(190,975,81,0,7); c.clip(); c.drawImage(av,109,894,162,162); c.restore(); }
+        texto(c,'¡Feliz Navidad!',320,950,'700 36px Nunito','#6e5f61');
+        texto(c,String(e.nombre||(datos&&datos.nombre)||''),320,1035,'84px "Luckiest Guy"','#c8102e','left',660);
+        // estadísticas
+        var st=[['⭐','Puntos obtenidos',fmt(ganados),'#c8102e'],['🛍️','Puntos canjeados',fmt(canjeados),'#9c7420'],
+                ['🎄','Puntos restantes',fmt(resto),'#1f7a4d'],['🔍','Códigos QR escaneados',fmt(lg.codigos||0),'#c8102e']];
+        st.forEach(function(q,i){ var x=60+(i%2)*490, y=1110+Math.floor(i/2)*185, w=470, h=165;
+          tarjeta(c,x,y,w,h); texto(c,q[0],x+38,y+108,'62px sans-serif','#000');
+          texto(c,q[2],x+118,y+104,'64px "Luckiest Guy"',q[3],'left',320); texto(c,q[1],x+120,y+140,'800 26px Nunito','#6e5f61','left',330); });
+        // logros
+        var y0=1490; tarjeta(c,60,y0,960,180);
+        var hechos=LOGROS.filter(function(l){return LG.ok[l.id];});
+        texto(c,'🏅 Mis logros',100,y0+58,'900 34px Nunito','#c8102e'); texto(c,hechos.length+' de '+LOGROS.length,980,y0+58,'40px "Luckiest Guy"','#9c7420','right');
+        var med=LOGROS.map(function(l){ return {ok:!!LG.ok[l.id],svg:lgIcono(l.id).replace('<svg','<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"')}; });
+        (function sig(i){
+          if(i>=med.length){ cierre(); return; }
+          var cx=118+i*112, cy=y0+120, m=med[i];
+          var gr=c.createRadialGradient(cx-12,cy-14,4,cx,cy,44); if(m.ok){ gr.addColorStop(0,'#fff3c4'); gr.addColorStop(.6,'#f2c14e'); gr.addColorStop(1,'#c9952e'); } else { gr.addColorStop(0,'#e9e2da'); gr.addColorStop(1,'#cfc6bd'); }
+          c.fillStyle=gr; c.beginPath(); c.arc(cx,cy,42,0,7); c.fill(); c.lineWidth=4; c.strokeStyle=m.ok?'#fff':'#e2d8ce'; c.stroke();
+          svgAImagen(m.svg,function(im){ if(im){ c.save(); if(!m.ok){ c.globalAlpha=.28; c.filter='grayscale(1) brightness(.4)'; } c.drawImage(im,cx-32,cy-32,64,64); c.restore(); } sig(i+1); });
+        })(0);
+        function cierre(){
+          // premios canjeados: número y lista
+          var y1=1690; tarjeta(c,60,y1,960,200);
+          texto(c,'🎁 Mis premios',100,y1+56,'900 34px Nunito','#c8102e');
+          texto(c,pr.length+(pr.length===1?' premio':' premios'),980,y1+56,'40px "Luckiest Guy"','#9c7420','right');
+          if(!pr.length) texto(c,'¡Este año junté puntos y me divertí! 🎄',100,y1+112,'800 30px Nunito','#2a1d1f','left',880);
+          else {
+            var lista=pr.slice(0,3);
+            lista.forEach(function(p,i){
+              var yy=y1+104+i*36, nom=(i===2&&pr.length>3)?p.producto+' (y '+(pr.length-3)+' más)':p.producto;
+              texto(c,'•  '+nom,100,yy,'800 28px Nunito','#2a1d1f','left',700);
+              texto(c,'−'+fmt(p.puntos)+' pts',980,yy,'900 26px Nunito','#c8102e','right');
+            });
+          }
+          entregar(cv,termina);
+        }
+      });
+    });
+  });
+}
+function entregar(cv,termina){
+  cv.toBlob(function(bl){
+    if(!bl){ termina(false); return; }
+    var nombre='mi-posada-2026-'+String((datos&&datos.nombre)||'resumen')+'.png', url=URL.createObjectURL(bl);
+    var d=document.createElement('div'); d.className='ap-notif ap-resumen'; d.setAttribute('role','dialog'); d.setAttribute('aria-label','Tu resumen de la posada');
+    d.innerHTML='<div class="ap-res-caja"><img src="'+url+'" alt="Resumen de tu participación en la posada"><p>Mantén presionada la imagen para guardarla en tus fotos, o compártela directo en tu historia.</p>'+
+      '<button class="boton" type="button" data-a="compartir">📲 Compartir / Guardar</button><button class="boton secundario" type="button" data-a="cerrar">Cerrar</button></div>';
+    $('appPosada').appendChild(d);
+    d.querySelector('[data-a="cerrar"]').onclick=function(){ d.remove(); URL.revokeObjectURL(url); };
+    d.querySelector('[data-a="compartir"]').onclick=function(){
+      var f=null; try{ f=new File([bl],nombre,{type:'image/png'}); }catch(e){}
+      if(f&&navigator.canShare&&navigator.canShare({files:[f]})){ navigator.share({files:[f],title:'Mi posada 2026'}).catch(function(){}); }
+      else { var a=document.createElement('a'); a.href=url; a.download=nombre; document.body.appendChild(a); a.click(); a.remove(); }
+    };
+    termina(true);
+  },'image/png');
+}
+
 /* ---------- Inicio (menú) ---------- */
 var QR_ICONO='<svg viewBox="0 0 29 29" aria-hidden="true"><path fill="#fff" d="M0 0h9v9H0zM2 2v5h5V2zM3 3h3v3H3zM20 0h9v9h-9zM22 2v5h5V2zM23 3h3v3h-3zM0 20h9v9H0zM2 22v5h5v-5zM3 23h3v3H3zM11 0h2v2h-2zM14 1h2v3h-2zM11 4h2v3h-2zM16 5h2v2h-2zM12 9h3v2h-3zM17 9h2v4h-2zM0 11h3v2H0zM5 11h4v2H5zM10 12h2v3h-2zM13 13h3v2h-3zM20 11h3v2h-3zM25 11h4v2h-4zM1 15h4v2H1zM7 15h2v3H7zM18 15h3v2h-3zM23 15h2v4h-2zM27 15h2v3h-2zM11 17h4v2h-4zM16 18h2v3h-2zM20 19h2v2h-2zM11 21h2v2h-2zM14 22h3v2h-3zM20 22h3v3h-3zM25 21h4v2h-4zM11 25h4v2h-4zM17 26h3v3h-3zM24 25h2v4h-2zM27 26h2v3h-2z"/></svg>';
 var TILES=[
@@ -1691,14 +1829,15 @@ function inicio(op){
     '<div><div class="ap-hola">¡Feliz Navidad,</div><div class="ap-nombre">'+esc(d.nombre)+'!</div><div class="ap-id">Tu ID: '+esc(d.id||'')+'</div><div class="ap-tipav">Toca tu avatar para personalizarlo</div></div></div>'+
     '<div class="ap-puntos"><b id="apPts">'+fmt(d.total)+'</b><span>puntos disponibles</span></div>'+
     '<p class="ap-mini" id="apMini">'+mini(d)+'</p><div id="apBono"></div>'+
-    '<button class="ap-logrosbtn" id="apLogrosBtn" type="button">🏅 Mis logros <b>'+(lgListo?(lgCuenta()+' / '+LOGROS.length):'…')+'</b><span aria-hidden="true">›</span></button></section>'+
+    '<button class="ap-logrosbtn" id="apLogrosBtn" type="button">🏅 Mis logros <b>'+(lgListo?(lgCuenta()+' / '+LOGROS.length):'…')+'</b><span aria-hidden="true">›</span></button>'+
+    '<button class="ap-resumenbtn" id="apResumenBtn" type="button">📲 Mi resumen de la posada</button></section>'+
     '<nav class="ap-menu" aria-label="Menú de la posada">'+TILES.map(function(t){
       return '<button class="ap-tile '+t.cls+(F[t.s]?'':' bloqueado')+'" type="button" data-s="'+t.s+'" aria-label="'+t.t+'">'+
         '<span class="ap-abierto"><i>'+t.ico+'</i><span><b>'+t.t+'</b><small>'+t.d+'</small></span></span>'+
         '<span class="ap-cerrado" aria-hidden="true"><i class="ap-pista">'+t.pista+'</i><span><b>'+t.frase+'</b><small>🔒 Se desbloquea durante la posada</small></span></span></button>';
     }).join('')+'</nav><p class="ap-pie">Deja esta app abierta toda la noche 🎄</p>');
   document.querySelectorAll('.ap-tile').forEach(function(b){ b.onclick=function(){ abrir(b.getAttribute('data-s')); }; });
-  $('apAvatar').onclick=editorAvatar; $('apLogrosBtn').onclick=logros;
+  $('apAvatar').onclick=editorAvatar; $('apLogrosBtn').onclick=logros; $('apResumenBtn').onclick=miResumen;
   if(op.desde!=null) contador($('apPts'),Number(op.desde),Number(d.total||0));
   if(op.bono>0){ $('apBono').innerHTML='<div class="ap-bono">🎉 ¡+'+fmt(op.bono)+' puntos de bienvenida!</div>'; confeti(); }
   if(op.premio) $('apBono').innerHTML='<div class="ap-bono">🎁 ¡Ganaste <b>'+esc(op.premio)+'</b> en la subasta! Revisa tus premios.</div>';
