@@ -363,6 +363,43 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:Nunit
 .ap-fin{margin:0 0 12px;text-align:center;background:#c8102e;border:2px solid #f2c14e;border-radius:16px;padding:12px 14px;box-shadow:0 10px 20px -10px rgba(0,0,0,.6)}
 .ap-fin b{display:block;font-family:"Luckiest Guy",sans-serif;font-weight:400;font-size:24px;letter-spacing:.02em;color:#fff}
 .ap-fin span{display:block;font-weight:800;color:#ffe08a;margin-top:2px}
+
+.ap-logrosbtn{display:flex;align-items:center;gap:10px;width:100%;margin-top:14px;border:2px solid #f2c14e;background:#fff8e6;color:#3a2408;border-radius:16px;padding:12px 14px;
+  font:900 17px Nunito,sans-serif;cursor:pointer}
+.ap-logrosbtn b{margin-left:auto;font-family:"Luckiest Guy",sans-serif;font-weight:400;font-size:20px;color:#c8102e;letter-spacing:.02em}
+.ap-logrosbtn span{font-size:22px;color:#c8102e}
+.ap-logrosbtn:focus-visible{outline:3px solid #c8102e;outline-offset:3px}
+.ap-lgres{text-align:center;font-weight:800;color:#e3f1e8;margin:0 0 14px}
+.ap-lggrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ap-logro{position:relative;background:#141416;border:1.5px solid rgba(255,255,255,.08);border-radius:20px;padding:16px 12px 14px;text-align:center;color:#fff}
+.ap-logro .ap-medalla{width:66px;height:66px;margin:0 auto 8px;border-radius:50%;display:grid;place-items:center;font-size:32px;background:rgba(255,255,255,.07);border:3px solid rgba(255,255,255,.12)}
+.ap-logro b{display:block;font-family:"Luckiest Guy",sans-serif;font-weight:400;font-size:18px;letter-spacing:.02em;color:rgba(255,255,255,.75);line-height:1.1}
+.ap-logro small{display:block;margin-top:5px;font-weight:700;font-size:13px;color:rgba(255,255,255,.55);line-height:1.3}
+.ap-logro em{display:block;margin-top:6px;font-style:normal;font-weight:900;font-size:12px;color:rgba(255,255,255,.6)}
+.ap-lgbar{height:7px;border-radius:7px;background:rgba(255,255,255,.12);margin-top:10px;overflow:hidden}
+.ap-lgbar i{display:block;height:100%;border-radius:7px;background:linear-gradient(90deg,#2f9e62,#f2c14e)}
+.ap-logro.ok{background:#fffaf3;border:2px solid #f2c14e;color:#2a1d1f;box-shadow:0 12px 24px -12px rgba(0,0,0,.6)}
+.ap-logro.ok .ap-medalla{background:radial-gradient(circle at 35% 30%,#fff3c4,#f2c14e 60%,#c9952e);border-color:#fff;box-shadow:0 0 0 3px #f2c14e,0 6px 14px rgba(0,0,0,.25);animation:apBrillo 2.8s ease-in-out infinite}
+@keyframes apBrillo{0%,100%{filter:brightness(1)}50%{filter:brightness(1.15)}}
+.ap-logro.ok b{color:#c8102e}.ap-logro.ok small{color:#6e5f61}
+.ap-logro .sello{display:inline-block;margin-top:8px;background:#1f7a4d;color:#fff;border-radius:999px;padding:3px 10px;font-size:11px;letter-spacing:.04em}
+.ap-notif-ico.oro{background:radial-gradient(circle at 35% 30%,#fff3c4,#f2c14e 60%,#c9952e)}
+
+.ap-tile.azul{background:linear-gradient(135deg,#5b6ee1,#2c3a8c)}
+.ap-reto{text-align:center}
+.ap-retoico{width:96px;height:96px;margin:4px auto 6px;border-radius:50%;display:grid;place-items:center;font-size:52px;background:radial-gradient(circle at 35% 30%,#fff3c4,#f2c14e 60%,#c9952e);box-shadow:0 0 0 4px #fff,0 0 0 7px #f2c14e}
+.ap-retonum{margin:10px 0 0 !important;font:900 13px Nunito,sans-serif !important;letter-spacing:.12em;color:#1f7a4d !important;text-transform:uppercase}
+.ap-retotxt{margin:4px 0 6px;font-family:"Luckiest Guy",sans-serif;font-weight:400;font-size:26px;line-height:1.12;color:#c8102e;letter-spacing:.02em}
+.ap-retopts{margin:0 0 6px !important;font-weight:900 !important;color:#9c7420 !important}
+.ap-retoest{margin:14px 0 4px;border-radius:16px;padding:12px 14px;text-align:left;display:grid;grid-template-columns:auto 1fr;gap:2px 10px;align-items:center;font-size:22px}
+.ap-retoest b{font:900 17px Nunito,sans-serif}.ap-retoest span{grid-column:2;font:700 14px/1.35 Nunito,sans-serif}
+.ap-retoest.ok{background:#e3f4ea;color:#145c39}.ap-retoest.rev{background:#fff3c4;color:#7a5a12}.ap-retoest.mal{background:#fde3e6;color:#9a0b22}
+.ap-retofoto{display:block;width:100%;max-height:360px;object-fit:cover;border-radius:16px;margin:14px 0 4px;border:3px solid #f2c14e}
+.ap-retonota{margin:8px 0 0 !important;font-size:13px !important;color:#6e5f61}
+
+.ap-retopasos{margin:14px 0 4px;text-align:left;background:#f3f8f5;border:2px dashed #2f9e62;border-radius:16px;padding:12px 14px}
+.ap-retopasos b{display:block;font:900 16px Nunito,sans-serif;color:#1f7a4d;margin-bottom:6px}
+.ap-retopasos ol{margin:0;padding-left:20px;font:700 14px/1.45 Nunito,sans-serif;color:#2a1d1f}
 </style>
 </head>
 <body>
@@ -1246,7 +1283,7 @@ requestAnimationFrame(cuadro);
    Prueba sin encenderla: agrega ?app=1 al link (y ?app=0 para ver el telón). */
 (function(){
 var API='https://script.google.com/macros/s/AKfycbz3BdSkfxvH9OzpXBI4hdP0D5GQu6DWrOJOsajLLxBc3F9gvqqaVgL_Pq5Nra9zPg1s/exec';
-var modoListo=false, LLAVE='posada_jugador', activa=false, datos=null, vista='', F={qr:false,mural:false,premios:false,terminado:false};
+var modoListo=false, LLAVE='posada_jugador', activa=false, datos=null, vista='', F={qr:false,mural:false,premios:false,reto:false,terminado:false};
 var forzar=new URLSearchParams(location.search).get('app');
 var GORRO='<svg viewBox="0 0 120 80" aria-hidden="true"><path d="M10 62 C16 26 52 4 88 8 C108 11 118 26 116 46 L102 50 C98 36 90 30 80 31 C90 44 96 54 98 62 Z" fill="#c8102e"/><rect x="2" y="56" width="100" height="22" rx="11" fill="#fff"/><circle cx="110" cy="48" r="11" fill="#fff"/></svg>';
 function $(i){return document.getElementById(i);}
@@ -1371,7 +1408,7 @@ function registro(error){
       if(o&&o.confirmar){ confirmar(a,o.candidatos||[]); return; }
       if(!o||!o.nombre){ btn.disabled=false; btn.textContent='🎁 Unirme y sumar puntos'; $('apAyuda').textContent='No se pudo registrar, intenta de nuevo.'; $('apAyuda').className='ayuda error'; return; }
       if(o.nuevaClave) guardarClave(o.nuevaClave);
-      datos=o; inicio({bono:o.nuevo?o.bono:0});
+      datos=o; inicio({bono:o.nuevo?o.bono:0}); setTimeout(revisarLogros,2500);
     },function(){ btn.disabled=false; btn.textContent='🎁 Unirme y sumar puntos'; aviso('Sin conexión. Intenta de nuevo.'); });
   }
   btn.onclick=enviar; inp.onkeydown=function(e){if(e.key==='Enter')enviar();};
@@ -1450,7 +1487,7 @@ function editorAvatar(){
     '<button class="boton secundario" id="apAvAzar" type="button">🎲 Sorpréndeme</button></section>');
   pintarGrupos();
   $('apVolver').onclick=function(){ inicio({}); };
-  $('apAvOk').onclick=function(){ avGuardar(avEdit); aviso('¡Listo! Tu avatar quedó guardado 🎄'); inicio({}); };
+  $('apAvOk').onclick=function(){ avGuardar(avEdit); aviso('¡Listo! Tu avatar quedó guardado 🎄'); inicio({}); setTimeout(revisarLogros,800); };
   $('apAvAzar').onclick=function(){ Object.keys(AV_OPC).forEach(function(k){ var o=AV_OPC[k]; avEdit[k]=o[Math.floor(Math.random()*o.length)][0]; }); pintarGrupos(); };
 }
 function pintarGrupos(){
@@ -1468,6 +1505,129 @@ function pintarGrupos(){
   }; });
 }
 
+/* ---------- Logros ---------- */
+var SB_MURAL={url:'https://gdmbgqpnkixahyrnbnwg.supabase.co',key:'sb_publishable_yklpyDTvFTVefjXAu3XdXA_DZdtyWgR'};
+var LOGROS=[
+  {id:'dentro',ico:'🎟️',t:'¡Ya estoy dentro!',d:'Únete a la posada desde la app.'},
+  {id:'coleccionista',ico:'🧩',t:'El coleccionista',d:'Escanea 5 códigos QR diferentes.',meta:5},
+  {id:'fotografo',ico:'📸',t:'El fotógrafo',d:'Sube 3 fotos o cartas al mural.',meta:3},
+  {id:'infiltrado',ico:'🕵️',t:'El infiltrado',d:'Encuentra un QR secreto.'},
+  {id:'cazarregalos',ico:'🎁',t:'El cazarregalos',d:'Gana un regalo misterioso.'},
+  {id:'estilista',ico:'🎨',t:'El estilista',d:'Personaliza tu avatar.'},
+  {id:'sobreviviente',ico:'🛡️',t:'El sobreviviente',d:'Llega a la subasta final con puntos.'},
+  {id:'magnate',ico:'💰',t:'El magnate',d:'Gana una subasta.'}];
+var LG={progreso:{},ok:{}}, lgListo=false;
+function lgGuardados(){ try{ return JSON.parse(localStorage.getItem('posada_logros')||'null'); }catch(e){ return null; } }
+function lgGuardar(o){ try{ localStorage.setItem('posada_logros',JSON.stringify(o)); }catch(e){} }
+function avatarPropio(){ try{ var a=localStorage.getItem('posada_avatar'); return !!a && a!==JSON.stringify(avDef()); }catch(e){ return false; } }
+function contarFotos(apodo,listo){
+  if(!apodo){ listo(0); return; }
+  fetch(SB_MURAL.url+'/rest/v1/mural_fotos?select=id&nombre=ilike.'+encodeURIComponent(apodo),{headers:{apikey:SB_MURAL.key}})
+    .then(function(r){return r.ok?r.json():[];}).then(function(f){ listo(Array.isArray(f)?f.length:0); }).catch(function(){ listo(null); });
+}
+function revisarLogros(){
+  if(!datos||!datos.nombre) return;
+  llamar({api:'logros',clave:clave()},function(o){
+    if(!o||!o.registrado) return;
+    contarFotos(o.apodo||datos.nombre,function(fotos){
+      var prev=LG.progreso.fotografo||0;
+      var p={dentro:1,coleccionista:o.codigos||0,fotografo:fotos==null?prev:fotos,infiltrado:o.secreto?1:0,cazarregalos:o.misterioso?1:0,
+             estilista:avatarPropio()?1:0,sobreviviente:o.sobreviviente?1:0,magnate:o.magnate?1:0};
+      var guard=lgGuardados(), nuevos=[];
+      LOGROS.forEach(function(l){ var ok=p[l.id]>=(l.meta||1) || !!(guard&&guard[l.id]); if(ok&&!(guard&&guard[l.id])) nuevos.push(l); LG.ok[l.id]=ok; });
+      LG.progreso=p;
+      var g2=guard||{}; LOGROS.forEach(function(l){ if(LG.ok[l.id]) g2[l.id]=1; }); lgGuardar(g2);
+      if(guard) nuevos.forEach(function(l){ notificar({logro:l}); });
+      lgListo=true; pintarLogrosResumen(); if(vista==='logros') pintarLogros();
+    });
+  },function(){});
+}
+function lgCuenta(){ return LOGROS.filter(function(l){return LG.ok[l.id];}).length; }
+function pintarLogrosResumen(){ var b=$('apLogrosBtn'); if(b) b.querySelector('b').textContent=lgListo?(lgCuenta()+' / '+LOGROS.length):'…'; }
+function logros(){
+  vista='logros'; verEscena('');
+  poner(volver()+'<h2 class="ap-titsec">🏅 Mis logros</h2><p class="ap-lgres" id="apLgRes"></p><div class="ap-lggrid" id="apLgGrid"></div>');
+  $('apVolver').onclick=function(){ inicio({}); };
+  pintarLogros(); revisarLogros();
+}
+function pintarLogros(){
+  var g=$('apLgGrid'); if(!g) return;
+  $('apLgRes').textContent=lgListo?'Llevas '+lgCuenta()+' de '+LOGROS.length+' logros. ¡Sigue participando para desbloquear más!':'Revisando tus logros…';
+  g.innerHTML=LOGROS.map(function(l){
+    var ok=!!LG.ok[l.id], n=Math.min(LG.progreso[l.id]||0,l.meta||1);
+    return '<div class="ap-logro'+(ok?' ok':'')+'"><div class="ap-medalla" aria-hidden="true">'+(ok?l.ico:'🔒')+'</div>'+
+      '<b>'+l.t+'</b><small>'+l.d+'</small>'+
+      (l.meta&&!ok?'<div class="ap-lgbar" role="progressbar" aria-valuemin="0" aria-valuemax="'+l.meta+'" aria-valuenow="'+n+'"><i style="width:'+(n/l.meta*100)+'%"></i></div><em>'+n+' / '+l.meta+'</em>':'')+
+      (ok?'<em class="sello">¡Desbloqueado!</em>':'')+'</div>';
+  }).join('');
+}
+
+/* ---------- 📸 Mi reto (foto) ---------- */
+var RETO=null, retoArchivo=null, retoSondeo=0;
+function miReto(){
+  vista='reto'; verEscena('');
+  poner(volver()+'<h2 class="ap-titsec">⭐ Bonus: puntos extra</h2><div id="apReto"><section class="tarjeta"><p class="ap-mini">Buscando tu misión…</p></section></div>');
+  $('apVolver').onclick=function(){ clearInterval(retoSondeo); inicio({}); };
+  cargarReto(true);
+  clearInterval(retoSondeo); retoSondeo=setInterval(function(){ if(vista==='reto'&&RETO&&RETO.estado==='revision') cargarReto(false); else if(vista!=='reto') clearInterval(retoSondeo); },12000);
+}
+function cargarReto(pintar){
+  llamar({api:'reto',clave:clave()},function(o){
+    if(!o) return;
+    if(o.activo===false){ if(vista==='reto') $('apReto').innerHTML='<section class="tarjeta"><p class="ap-mini">Tu bonus todavía no está disponible. 🎄</p></section>'; return; }
+    var antes=RETO&&RETO.estado; RETO=o;
+    if(antes==='revision'&&o.estado==='aprobado'){ confeti(); aviso('🎉 ¡Misión cumplida! +'+o.puntos+' puntos'); actualizar(); }
+    if(antes==='revision'&&o.estado==='rechazado'){ aviso('📸 Tu foto necesita un ajuste. Revisa el comentario.'); }
+    if(vista==='reto'&&(pintar||antes!==o.estado)) pintarReto();
+  },function(){ if(vista==='reto'&&pintar) $('apReto').innerHTML='<section class="tarjeta"><p class="ap-mini">Sin conexión. Toca ↻ para intentar de nuevo.</p></section>'; });
+}
+function pintarReto(){
+  var r=RETO, h='<section class="tarjeta ap-reto"><div class="ap-retoico" aria-hidden="true">'+r.icono+'</div><p class="ap-retonum">Tu misión secreta</p><h3 class="ap-retotxt">'+esc(r.texto)+'</h3>'+
+    '<p class="ap-retopts">⭐ Vale +'+fmt(r.puntos)+' puntos</p>';
+  if(r.estado==='aprobado') h+='<div class="ap-retoest ok">✅ <b>¡Misión cumplida!</b><span>Ya ganaste tus '+fmt(r.puntos)+' puntos.'+(r.retro?' «'+esc(r.retro)+'»':'')+'</span></div>'+(r.foto?'<img class="ap-retofoto" src="'+esc(r.foto)+'" alt="Tu foto de la misión">':'');
+  else if(r.estado==='revision') h+='<div class="ap-retoest rev">⏳ <b>Tu foto está en revisión</b><span>Un organizador la va a revisar. Te avisamos aquí mismo.</span></div>'+(r.foto?'<img class="ap-retofoto" src="'+esc(r.foto)+'" alt="Tu foto de la misión">':'');
+  else {
+    if(r.estado==='rechazado') h+='<div class="ap-retoest mal">📝 <b>Tu foto necesita un ajuste</b><span>'+esc(r.retro||'Inténtalo de nuevo.')+'</span></div>';
+    if(r.estado!=='rechazado') h+='<div class="ap-retopasos"><b>¿Cómo ganar tus '+fmt(r.puntos)+' puntos?</b><ol>'+
+      '<li>Cumple la misión de arriba aquí en la posada.</li><li>Tómale una foto y envíala desde aquí.</li>'+
+      '<li>Un organizador la revisa y, si está bien, ¡los puntos son tuyos!</li></ol></div>';
+    h+='<div id="apRetoPrev"></div><input type="file" id="apFoto" accept="image/*" capture="environment" hidden>'+
+       '<button class="boton" id="apTomar" type="button">📷 '+(r.estado==='rechazado'?'Volver a tomar la foto':'Tomar foto')+'</button>'+
+       '<p class="ap-retonota">También puedes elegirla de tu galería.</p>';
+  }
+  $('apReto').innerHTML=h+'</section>';
+  var b=$('apTomar'); if(b){ b.onclick=function(){ $('apFoto').click(); }; $('apFoto').onchange=elegirFoto; }
+}
+function elegirFoto(e){
+  var f=e.target.files&&e.target.files[0]; if(!f) return; retoArchivo=f;
+  var url=URL.createObjectURL(f);
+  $('apRetoPrev').innerHTML='<img class="ap-retofoto" src="'+url+'" alt="Vista previa de tu foto"><button class="boton" id="apEnviarFoto" type="button">✅ Enviar foto</button>';
+  $('apTomar').className='boton secundario'; $('apTomar').textContent='↺ Tomar otra';
+  $('apEnviarFoto').onclick=enviarFoto;
+}
+function comprimir(f,listo){
+  var img=new Image(); img.onload=function(){
+    var m=1280, w=img.naturalWidth, h=img.naturalHeight, k=Math.min(1,m/Math.max(w,h)), c=document.createElement('canvas');
+    c.width=Math.round(w*k); c.height=Math.round(h*k); c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+    c.toBlob(function(b){ listo(b); },'image/jpeg',0.82);
+  }; img.onerror=function(){ listo(null); }; img.src=URL.createObjectURL(f);
+}
+function enviarFoto(){
+  var b=$('apEnviarFoto'); b.disabled=true; b.textContent='Subiendo tu foto…';
+  var mal=function(t){ b.disabled=false; b.textContent='✅ Enviar foto'; aviso(t||'No se pudo subir la foto. Intenta de nuevo.'); };
+  comprimir(retoArchivo,function(blob){
+    if(!blob) return mal('No pudimos leer esa foto. Prueba con otra.');
+    var hoy=new Date().toISOString().slice(0,10), ruta='retos/'+hoy+'/'+((datos&&datos.id)||'J')+'-'+Date.now()+'.jpg';
+    fetch(SB_MURAL.url+'/storage/v1/object/mural/'+ruta,{method:'POST',headers:{apikey:SB_MURAL.key,'Content-Type':'image/jpeg','x-upsert':'false','cache-control':'31536000'},body:blob})
+      .then(function(r){ if(!r.ok) throw 0;
+        llamar({api:'retoEnviar',clave:clave(),foto:SB_MURAL.url+'/storage/v1/object/public/mural/'+ruta},function(o){
+          if(o&&o.estado){ RETO=o; pintarReto(); aviso('📨 ¡Foto enviada! Ahora está en revisión.'); } else mal();
+        },function(){ mal('Sin conexión. Intenta de nuevo.'); });
+      }).catch(function(){ mal(); });
+  });
+}
+function revisarRetoFondo(){ if(F.reto&&RETO&&RETO.estado==='revision'&&vista!=='reto') cargarReto(false); }
+
 /* ---------- Inicio (menú) ---------- */
 var QR_ICONO='<svg viewBox="0 0 29 29" aria-hidden="true"><path fill="#fff" d="M0 0h9v9H0zM2 2v5h5V2zM3 3h3v3H3zM20 0h9v9h-9zM22 2v5h5V2zM23 3h3v3h-3zM0 20h9v9H0zM2 22v5h5v-5zM3 23h3v3H3zM11 0h2v2h-2zM14 1h2v3h-2zM11 4h2v3h-2zM16 5h2v2h-2zM12 9h3v2h-3zM17 9h2v4h-2zM0 11h3v2H0zM5 11h4v2H5zM10 12h2v3h-2zM13 13h3v2h-3zM20 11h3v2h-3zM25 11h4v2h-4zM1 15h4v2H1zM7 15h2v3H7zM18 15h3v2h-3zM23 15h2v4h-2zM27 15h2v3h-2zM11 17h4v2h-4zM16 18h2v3h-2zM20 19h2v2h-2zM11 21h2v2h-2zM14 22h3v2h-3zM20 22h3v3h-3zM25 21h4v2h-4zM11 25h4v2h-4zM17 26h3v3h-3zM24 25h2v4h-2zM27 26h2v3h-2z"/></svg>';
 var TILES=[
@@ -1476,7 +1636,9 @@ var TILES=[
   {s:'mural',cls:'verde',ico:'📸',t:'Mural navideño',d:'Sube fotos o cartas para la pantalla',off:'El mural se abre más tarde en la posada 📸',
    pista:'🖼️',frase:'Muy pronto…',nTit:'¡El mural navideño está abierto!',nTxt:'Sube tus fotos o cartas y míralas en la pantalla grande.'},
   {s:'premios',cls:'oro',ico:'🎁',t:'Premios',d:'Lo que ganaste en la subasta y tus puntos',off:'Los premios se abren en la subasta 🎁',
-   pista:'🎁',frase:'Próximamente',nTit:'¡Ya puedes ver tus premios!',nTxt:'Revisa lo que ganaste en la subasta y tus puntos.'}];
+   pista:'🎁',frase:'Próximamente',nTit:'¡Ya puedes ver tus premios!',nTxt:'Revisa lo que ganaste en la subasta y tus puntos.'},
+  {s:'reto',cls:'azul',ico:'⭐',t:'Bonus: puntos extra',d:'Descubre tu misión secreta y gana 100 puntos',off:'Tu bonus de puntos extra se desbloquea más tarde ⭐',
+   pista:'⭐',frase:'Bonus: puntos extra',nTit:'¡Desbloqueaste tu bonus de puntos extra!',nTxt:'Ábrelo para descubrir tu misión secreta y ganar 100 puntos.'}];
 function inicio(op){
   op=op||{}; vista='inicio'; detenerCamara(); verEscena('normal');
   var d=datos||{};
@@ -1485,14 +1647,15 @@ function inicio(op){
     '<section class="tarjeta"><div class="ap-jugador"><button class="ap-avatarbtn" id="apAvatar" type="button" aria-label="Personalizar mi avatar">'+avatarSVG(avLeer())+'<span class="ap-lapiz" aria-hidden="true">✏️</span></button>'+
     '<div><div class="ap-hola">¡Feliz Navidad,</div><div class="ap-nombre">'+esc(d.nombre)+'!</div><div class="ap-id">Tu ID: '+esc(d.id||'')+'</div><div class="ap-tipav">Toca tu avatar para personalizarlo</div></div></div>'+
     '<div class="ap-puntos"><b id="apPts">'+fmt(d.total)+'</b><span>puntos disponibles</span></div>'+
-    '<p class="ap-mini" id="apMini">'+mini(d)+'</p><div id="apBono"></div></section>'+
+    '<p class="ap-mini" id="apMini">'+mini(d)+'</p><div id="apBono"></div>'+
+    '<button class="ap-logrosbtn" id="apLogrosBtn" type="button">🏅 Mis logros <b>'+(lgListo?(lgCuenta()+' / '+LOGROS.length):'…')+'</b><span aria-hidden="true">›</span></button></section>'+
     '<nav class="ap-menu" aria-label="Menú de la posada">'+TILES.map(function(t){
       return '<button class="ap-tile '+t.cls+(F[t.s]?'':' bloqueado')+'" type="button" data-s="'+t.s+'" aria-label="'+t.t+'">'+
         '<span class="ap-abierto"><i>'+t.ico+'</i><span><b>'+t.t+'</b><small>'+t.d+'</small></span></span>'+
         '<span class="ap-cerrado" aria-hidden="true"><i class="ap-pista">'+t.pista+'</i><span><b>'+t.frase+'</b><small>🔒 Se desbloquea durante la posada</small></span></span></button>';
     }).join('')+'</nav><p class="ap-pie">Deja esta app abierta toda la noche 🎄</p>');
   document.querySelectorAll('.ap-tile').forEach(function(b){ b.onclick=function(){ abrir(b.getAttribute('data-s')); }; });
-  $('apAvatar').onclick=editorAvatar;
+  $('apAvatar').onclick=editorAvatar; $('apLogrosBtn').onclick=logros;
   if(op.desde!=null) contador($('apPts'),Number(op.desde),Number(d.total||0));
   if(op.bono>0){ $('apBono').innerHTML='<div class="ap-bono">🎉 ¡+'+fmt(op.bono)+' puntos de bienvenida!</div>'; confeti(); }
   if(op.premio) $('apBono').innerHTML='<div class="ap-bono">🎁 ¡Ganaste <b>'+esc(op.premio)+'</b> en la subasta! Revisa tus premios.</div>';
@@ -1516,20 +1679,26 @@ function campanita(){
 function notificar(s){ colaAvisos.push(s); if(!avisoAbierto) siguienteAviso(); }
 function siguienteAviso(){
   var s=colaAvisos.shift(); if(!s){ avisoAbierto=false; return; } avisoAbierto=true;
-  var t=TILES.filter(function(x){return x.s===s;})[0];
   var d=document.createElement('div'); d.className='ap-notif'; d.setAttribute('role','alertdialog'); d.setAttribute('aria-labelledby','apNotifT');
+  if(typeof s==='object'&&s.logro){
+    var L=s.logro;
+    d.innerHTML='<div class="ap-notif-caja"><div class="ap-notif-cab">🏅 ¡LOGRO DESBLOQUEADO!</div><div class="ap-notif-ico oro">'+L.ico+'</div>'+
+      '<h3 id="apNotifT">'+L.t+'</h3><p>'+L.d+'</p><button class="boton" type="button" data-ir="1">Ver mis logros</button><button class="boton secundario" type="button">¡Genial!</button></div>';
+  } else {
+  var t=TILES.filter(function(x){return x.s===s;})[0];
   d.innerHTML='<div class="ap-notif-caja"><div class="ap-notif-cab">🔓 ¡NUEVO EN LA POSADA!</div><div class="ap-notif-ico">'+(s==='qr'?QR_ICONO:t.ico)+'</div>'+
     '<h3 id="apNotifT">'+t.nTit+'</h3><p>'+t.nTxt+'</p><button class="boton" type="button" data-ir="1">Ir ahora</button><button class="boton secundario" type="button">Después</button></div>';
+  }
   $('appPosada').appendChild(d); confeti(); campanita(); if(navigator.vibrate) try{navigator.vibrate([120,80,120]);}catch(e){}
-  if(document.hidden&&'Notification' in window&&Notification.permission==='granted'){ try{ new Notification('Posada Navideña',{body:t.nTit,icon:'apple-touch-icon.png'}); }catch(e){} }
-  var cerrar=function(ir){ d.remove(); if(ir){ colaAvisos=[]; avisoAbierto=false; abrir(s); } else siguienteAviso(); };
+  if(document.hidden&&'Notification' in window&&Notification.permission==='granted'){ try{ new Notification('Posada Navideña',{body:(typeof s==='object'?'🏅 '+s.logro.t:t.nTit),icon:'apple-touch-icon.png'}); }catch(e){} }
+  var cerrar=function(ir){ d.remove(); if(ir){ colaAvisos=[]; avisoAbierto=false; if(typeof s==='object') logros(); else abrir(s); } else siguienteAviso(); };
   d.querySelectorAll('button').forEach(function(b){ b.onclick=function(){ cerrar(b.getAttribute('data-ir')==='1'); }; });
   setTimeout(function(){ var y=d.querySelector('[data-ir]'); if(y) y.focus(); },50);
 }
 function abrir(s){
   var t=TILES.filter(function(x){return x.s===s;})[0];
   if(!F[s]){ aviso(t.off); return; }
-  if(s==='qr') escaner(); else if(s==='mural') mural(); else if(s==='premios') premios();
+  if(s==='qr') escaner(); else if(s==='mural') mural(); else if(s==='premios') premios(); else if(s==='reto') miReto();
 }
 
 /* ---------- Escáner de QR ---------- */
@@ -1581,8 +1750,8 @@ function leido(txt){
   if(navigator.vibrate) try{navigator.vibrate(60);}catch(e){}
   procesar(c);
 }
-var ICONOS={ok:'🎁',repetido:'⛄',expirado:'⏰',agotado:'🦌',invalido:'❓',error:'⚠️',terminado:'🔔'};
-var AVISOS={ok:'Último código',repetido:'Ese QR ya lo tenías',expirado:'Ese código ya cerró',agotado:'Ese código ya se agotó',invalido:'Ese código no es válido para la dinámica',terminado:'La posada terminó: usa tus puntos en la subasta'};
+var ICONOS={ok:'🎁',repetido:'⛄',expirado:'⏰',agotado:'🦌',invalido:'❓',error:'⚠️',terminado:'🔔',vacio:'📦'};
+var AVISOS={ok:'Último código',repetido:'Ese QR ya lo tenías',expirado:'Ese código ya cerró',agotado:'Ese código ya se agotó',invalido:'Ese código no es válido para la dinámica',terminado:'La posada terminó: usa tus puntos en la subasta',vacio:'Esa caja estaba vacía: ¡sigue buscando!'};
 function procesar(codigo){
   detenerCamara(); vista='revisando'; verEscena('leyendo');
   poner('<div class="revisando" role="status"><div class="t">Santa está revisando el QR…</div><div class="puntitos" aria-hidden="true"><i></i><i></i><i></i></div></div>');
@@ -1604,6 +1773,7 @@ function resultado(o,desde){
       ? '<button class="boton" id="apVer" type="button">🏠 Volver a mi menú</button><p class="nota" id="apCuenta">Regresas a tu menú en 20 segundos…</p>'
       : '<button class="boton" id="apVer" type="button">⭐ Ver mis puntos</button><button class="boton secundario" id="apOtro" type="button">📷 Escanear otro código</button>'));
   if(tipo==='ok') confeti();
+  setTimeout(revisarLogros,1500);
   var listo=false, ir=function(){ if(listo||vista!=='resultado') return; listo=true;
     inicio({aviso:tipo==='ok'?AVISOS.ok+': '+String(o.titulo||'').replace(/[¡!]/g,''):AVISOS[tipo], desde:tipo==='ok'?desde:null}); };
   $('apVer').onclick=ir;
@@ -1624,9 +1794,9 @@ function mural(){
   f.srcdoc=MURAL_HTML; cont.appendChild(f);
   var v=document.createElement('button'); v.type='button'; v.className='ap-volver ap-volver-mural'; v.textContent='⬅ Menú'; v.onclick=cerrarMural; cont.appendChild(v);
   document.body.appendChild(cont);
-  f.onload=function(){ try{ var n=f.contentDocument.getElementById('nombre'); if(n&&datos&&datos.nombre){ n.value=datos.nombre; n.dispatchEvent(new Event('input')); } }catch(e){} };
+  f.onload=function(){ try{ ['nombre','cartaFirma'].forEach(function(id){ var n=f.contentDocument.getElementById(id); if(n&&datos&&datos.nombre){ n.value=datos.nombre; n.dispatchEvent(new Event('input')); } }); }catch(e){} };
 }
-function cerrarMural(){ var m=$('apMural'); if(m) m.remove(); inicio({}); }
+function cerrarMural(){ var m=$('apMural'); if(m) m.remove(); inicio({}); setTimeout(revisarLogros,1500); }
 addEventListener('message',function(e){ if(e.data&&e.data.portal==='menu'&&$('apMural')) cerrarMural(); });
 
 /* ---------- Premios ---------- */
@@ -1671,9 +1841,9 @@ function revisarModo(){
     if(!o) return;
     if(!activa){ if(o.app) mostrarApp(o); return; }
     if(o.app===false&&forzar!=='1'){ location.reload(); return; }
-    var nuevos=['qr','mural','premios'].filter(function(k){return !!o[k]&&!F[k];});
-    var cambio=['qr','mural','premios'].some(function(k){return !!o[k]!==F[k];}), finCambio=!!o.terminado!==F.terminado;
-    F={qr:!!o.qr,mural:!!o.mural,premios:!!o.premios,terminado:!!o.terminado};
+    var nuevos=['qr','mural','premios','reto'].filter(function(k){return !!o[k]&&!F[k];});
+    var cambio=['qr','mural','premios','reto'].some(function(k){return !!o[k]!==F[k];}), finCambio=!!o.terminado!==F.terminado;
+    F={qr:!!o.qr,mural:!!o.mural,premios:!!o.premios,reto:!!o.reto,terminado:!!o.terminado};
     if(finCambio&&vista==='inicio'){ inicio({}); return; }
     if(cambio) pintarTiles(nuevos);
     if(modoListo&&datos&&datos.nombre) nuevos.forEach(notificar);
@@ -1684,7 +1854,7 @@ function revisarModo(){
 /* ---------- Encender / apagar la app ---------- */
 function mostrarApp(m){
   if(activa) return; activa=true;
-  if(m){ F={qr:!!m.qr,mural:!!m.mural,premios:!!m.premios,terminado:!!m.terminado}; modoListo=true; }
+  if(m){ F={qr:!!m.qr,mural:!!m.mural,premios:!!m.premios,reto:!!m.reto,terminado:!!m.terminado}; modoListo=true; }
   try{ if(window.apagarSonidoTelon) window.apagarSonidoTelon(); }catch(e){}
   window.__appActiva=true;
   ['teatro','sonido','refrescarTelon'].forEach(function(id){var el=$(id); if(el) el.style.display='none';});
@@ -1692,9 +1862,10 @@ function mostrarApp(m){
   verEscena('normal'); poner('<div class="ap-cargando">Cargando…</div>');
   llamar({api:'estado',clave:clave()},function(o){
     if(o&&o.evento){ ponerLetrero(o.evento); }
-    if(o&&o.nombre){ datos=o; canjesVistos=Number(o.canjes||0); inicio({}); } else registro();
+    if(o&&o.nombre){ datos=o; canjesVistos=Number(o.canjes||0); inicio({}); revisarLogros(); } else registro();
   },function(){ registro(); });
   setInterval(function(){ if(datos&&datos.nombre&&(vista==='inicio'||vista==='premios')) actualizar(); },10000);
+  setInterval(function(){ if(datos&&datos.nombre&&vista!=='qr'&&vista!=='mural'){ revisarLogros(); revisarRetoFondo(); } },30000);
 }
 $('apRefrescar').onclick=function(){ location.reload(); };
 if(forzar==='1'){ mostrarApp(null); revisarModo(); setInterval(revisarModo,15000); }
