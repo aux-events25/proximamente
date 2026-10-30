@@ -1929,7 +1929,7 @@ function miTarjeta(){
   var nom=(datos&&datos.nombre)||'', pts=Number((datos&&datos.total)||0);
   d.innerHTML='<button type="button" class="ap-tj-x" aria-label="Cerrar tarjeta">✕</button>'+
     '<div class="ap-tj">'+
-      '<div class="ap-tj-cab"><span>🎄 POSADA GÓMEZ 2026</span><b>TARJETA DE PUNTOS</b></div>'+
+      '<div class="ap-tj-cab"><span>🎄 POSADA GÓMEZ 2026</span><b>TARJETA DE PREMIOS</b></div>'+
       '<div class="ap-tj-quien"><div class="ap-tj-av">'+avatarSVG(avLeer())+'</div><div><strong>'+esc(nom)+'</strong><small>ID '+esc((datos&&datos.id)||'')+'</small></div></div>'+
       '<div class="ap-tj-pts"><small>Puntos disponibles</small><b id="apTjPts">'+fmt(pts)+'</b></div>'+
       '<div class="ap-tj-qr"><canvas id="apTjQR" width="240" height="240" role="img" aria-label="Tu código QR personal"></canvas><p id="apTjMsg">Cargando tu código…</p></div>'+
@@ -1943,7 +1943,7 @@ function miTarjeta(){
     var cv=$('apTjQR'), g=cv.getContext('2d'), m=q.getModuleCount(), px=Math.floor(240/(m+4)), off=Math.floor((240-px*m)/2);
     g.fillStyle='#fff'; g.fillRect(0,0,240,240); g.fillStyle='#1a1214';
     for(var y=0;y<m;y++) for(var x=0;x<m;x++) if(q.isDark(y,x)) g.fillRect(off+x*px,off+y*px,px,px);
-    $('apTjMsg').innerHTML='Muéstrala en la subasta para <b>cobrar tu premio</b> 🎁';
+    $('apTjMsg').innerHTML='Muéstrala en la subasta para <b>reclamar tu premio</b> 🎁';
   },function(){ $('apTjMsg').textContent='Sin conexión. Cierra y vuelve a abrir tu tarjeta.'; });
   clearInterval(tjTimer); tjTimer=setInterval(actualizar,3000);
 }
@@ -1978,7 +1978,7 @@ function inicio(op){
     '<div><div class="ap-hola">¡Feliz Navidad,</div><div class="ap-nombre">'+esc(d.nombre)+'!</div><div class="ap-id">Tu ID: '+esc(d.id||'')+'</div>'+(avatarPropio()?'':'<div class="ap-tipav">✨ Personaliza tu avatar</div>')+'</div></div>'+
     '<div class="ap-puntos"><b id="apPts">'+fmt(d.total)+'</b><span>puntos disponibles</span></div>'+
     '<p class="ap-mini" id="apMini">'+mini(d)+'</p><div id="apBono"></div>'+
-    '<button class="ap-tjbtn" id="apTjBtn" type="button">🎟️ Mi tarjeta <span>para cobrar en la subasta</span></button>'+
+    '<button class="ap-tjbtn" id="apTjBtn" type="button">🎟️ Mi tarjeta <span>úsala para reclamar tu premio</span></button>'+
     '<button class="ap-logrosbtn" id="apLogrosBtn" type="button">🏅 Mis logros <b>'+(lgListo?(lgCuenta()+' / '+LOGROS.length):'…')+'</b><span aria-hidden="true">›</span></button>'+
     '<button class="ap-resumenbtn" id="apResumenBtn" type="button">📲 Mi resumen de la posada</button></section>'+
     '<nav class="ap-menu" aria-label="Menú de la posada">'+TILES.map(function(t){
