@@ -1418,6 +1418,20 @@ function contador(el,a,b){
   el.textContent=fmt(a); setTimeout(function(){requestAnimationFrame(f);},350);
 }
 
+/* ---------- Datos guardados en el celular: siempre del jugador actual ---------- */
+// Los logros, el avatar y el conteo de fotos se guardan en el celular. Se "amarran" al jugador
+// (ID + número de reinicio). Si el jugador ya no existe o cambió, se borran para empezar limpio.
+function limpiarLocal(){
+  try{ ['posada_logros','posada_avatar','posada_fotos'].forEach(function(k){ localStorage.removeItem(k); }); }catch(e){}
+  LG={progreso:{},ok:{}}; lgListo=false;
+}
+function reinicioActual(){ try{ return localStorage.getItem('posada_reinicio')||'0'; }catch(e){ return '0'; } }
+function amarrarJugador(o){
+  if(!o||!o.id) return;
+  var dueno=reinicioActual()+':'+o.id, antes=null;
+  try{ antes=localStorage.getItem('posada_dueno'); }catch(e){}
+  if(antes!==dueno){ limpiarLocal(); try{ localStorage.setItem('posada_dueno',dueno); }catch(e){} }
+}
 /* ---------- Registro ---------- */
 function registro(error){
   vista='registro'; detenerCamara(); verEscena('normal');
@@ -1447,7 +1461,7 @@ function registro(error){
       if(o&&o.confirmar){ confirmar(a,o.candidatos||[]); return; }
       if(!o||!o.nombre){ btn.disabled=false; btn.textContent='🎁 Unirme y sumar puntos'; $('apAyuda').textContent=(o&&o.error==='ocupado')?o.mensaje:'No se pudo registrar, intenta de nuevo.'; $('apAyuda').className='ayuda error'; return; }
       if(o.nuevaClave) guardarClave(o.nuevaClave);
-      datos=o; inicio({bono:o.nuevo?o.bono:0}); revisarLogros();
+      amarrarJugador(o); datos=o; inicio({bono:o.nuevo?o.bono:0}); revisarLogros();
     },function(){ btn.disabled=false; btn.textContent='🎁 Unirme y sumar puntos'; aviso('Sin conexión. Intenta de nuevo.'); });
   }
   btn.onclick=enviar; inp.onkeydown=function(e){if(e.key==='Enter')enviar();};
@@ -1459,7 +1473,7 @@ function confirmar(apodo,cands){
     '<button class="boton" id="apSi" type="button">✅ Sí, es mío · '+fmt(c.total)+' pts</button>'+
     '<button class="boton secundario" id="apNo" type="button">No, elegiré otro apodo</button></section>');
   $('apSi').onclick=function(){ $('apSi').disabled=true;
-    llamar({api:'registrar',clave:clave(),nombre:apodo,opcion:'vincular:'+c.id},function(o){ if(o&&o.nuevaClave) guardarClave(o.nuevaClave); if(o&&o.nombre){datos=o;inicio({});} else registro('No se pudo recuperar, intenta de nuevo.'); }); };
+    llamar({api:'registrar',clave:clave(),nombre:apodo,opcion:'vincular:'+c.id},function(o){ if(o&&o.nuevaClave) guardarClave(o.nuevaClave); if(o&&o.nombre){amarrarJugador(o);datos=o;inicio({});} else registro('No se pudo recuperar, intenta de nuevo.'); }); };
   $('apNo').onclick=function(){ registro('El apodo "'+apodo+'" ya está ocupado. Elige otro.'); };
 }
 
@@ -2068,6 +2082,7 @@ function cargarPremios(){
 var canjesVistos=null;
 function actualizar(){
   llamar({api:'estado',clave:clave()},function(o){
+    if(o&&!o.nombre&&!o.error&&!o.tipo&&datos&&datos.nombre){ limpiarLocal(); try{ localStorage.removeItem('posada_dueno'); }catch(e){} datos=null; registro(); return; }
     if(!o||!o.nombre) return;
     var antes=Number((datos||{}).total||0), nuevos=Number(o.canjes||0), cambio=antes!==Number(o.total||0)||Number((datos||{}).ganados||0)!==Number(o.ganados||0)||nuevos!==canjesVistos;
     datos=Object.assign(datos||{},o);
@@ -2086,7 +2101,7 @@ function revisarModo(){
       var r0=null; try{ r0=localStorage.getItem('posada_reinicio'); }catch(e){}
       if(r0===null){ try{ localStorage.setItem('posada_reinicio',o.reinicio||''); }catch(e){} }
       else if(r0!==(o.reinicio||'')){
-        try{ ['posada_logros','posada_avatar','posada_fotos','posada_jugador'].forEach(function(k){ localStorage.removeItem(k); });
+        try{ ['posada_logros','posada_avatar','posada_fotos','posada_jugador','posada_dueno'].forEach(function(k){ localStorage.removeItem(k); });
              document.cookie='posada_jugador=; max-age=0; path=/'; localStorage.setItem('posada_reinicio',o.reinicio||''); }catch(e){}
         location.reload(); return;
       }
@@ -2114,7 +2129,7 @@ function mostrarApp(m){
   verEscena('normal'); poner('<div class="ap-cargando">Cargando…</div>');
   llamar({api:'estado',clave:clave()},function(o){
     if(o&&o.evento){ ponerLetrero(o.evento); }
-    if(o&&o.nombre){ datos=o; canjesVistos=Number(o.canjes||0); inicio({}); revisarLogros(); } else registro();
+    if(o&&o.nombre){ amarrarJugador(o); datos=o; canjesVistos=Number(o.canjes||0); inicio({}); revisarLogros(); } else { limpiarLocal(); try{ localStorage.removeItem('posada_dueno'); }catch(e){} registro(); }
   },function(){ registro(); });
   setInterval(function(){ if(datos&&datos.nombre&&!document.hidden&&vista!=='qr'&&vista!=='mural') actualizar(); },8000);
   setInterval(function(){ if(datos&&datos.nombre&&!document.hidden) revisarRetoFondo(); },10000);
