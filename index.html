@@ -400,6 +400,12 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:Nunit
 .ap-retopasos{margin:14px 0 4px;text-align:left;background:#f3f8f5;border:2px dashed #2f9e62;border-radius:16px;padding:12px 14px}
 .ap-retopasos b{display:block;font:900 16px Nunito,sans-serif;color:#1f7a4d;margin-bottom:6px}
 .ap-retopasos ol{margin:0;padding-left:20px;font:700 14px/1.45 Nunito,sans-serif;color:#2a1d1f}
+
+.ap-logro .ap-medalla{position:relative}
+.ap-logro .ap-medalla svg{width:50px;height:50px;filter:brightness(0);opacity:.4}
+.ap-logro.ok .ap-medalla svg{width:54px;height:54px;filter:none;opacity:1}
+.ap-candado{position:absolute;right:-4px;bottom:-4px;width:26px;height:26px;border-radius:50%;background:#2a2a2e;display:grid;place-items:center;font-size:13px;border:2px solid rgba(255,255,255,.2)}
+.ap-lgnotif svg{width:62px;height:62px}
 </style>
 </head>
 <body>
@@ -767,15 +773,26 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:Nunit
   <button id="sonido" type="button" aria-pressed="false"><span class="ico">🔔</span><span class="txt">Toca para activar el sonido</span></button>
 </div>
 <script>
-// ====== APERTURA DEL TELÓN ======
-// Automática: con 31 días o más el telón está casi cerrado y se va abriendo solo cada día hasta el 27 de noviembre.
-// Si quieres fijarla a mano, cambia null por un número de 0 (cerrado como ahora) a 100 (abierto del todo).
+// ====== APERTURA DEL TELÓN Y LUZ DEL ESCENARIO ======
+// Del 30 de octubre al 15 de noviembre el telón se abre un poco cada día y la escena se ilumina más,
+// hasta quedar abierto por completo y con la imagen descubierta el 15 de noviembre.
+// Si quieres fijarla a mano, cambia null por un número de 0 (cerrado) a 100 (abierto e iluminado).
+// Para previsualizar un avance sin cambiar nada: agrega ?avance=50 al link.
 var APERTURA_MANUAL = null;
-var DIAS_TOTALES = 31;
+var INICIO_TELON = Date.UTC(2026, 9, 30);     // 30 de octubre de 2026
+var TELON_ABIERTO = Date.UTC(2026, 10, 15);   // 15 de noviembre de 2026
 var DIAS=(function(){
   var p=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Monterrey',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()).split('-');
   var q=new URLSearchParams(location.search).get('dias');
   return q!==null?parseInt(q,10):Math.round((Date.UTC(2026,10,27)-Date.UTC(+p[0],+p[1]-1,+p[2]))/86400000);
+})();
+var AVANCE=(function(){
+  var q=new URLSearchParams(location.search).get('avance');
+  if(q!==null) return Math.max(0,Math.min(1,parseFloat(q)/100));
+  if(APERTURA_MANUAL!==null) return Math.max(0,Math.min(1,APERTURA_MANUAL/100));
+  var p=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Monterrey',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()).split('-');
+  var hoy=Date.UTC(+p[0],+p[1]-1,+p[2]);
+  return Math.max(0,Math.min(1,(hoy-INICIO_TELON)/(TELON_ABIERTO-INICIO_TELON)));
 })();
 var raiz=document.documentElement.style, luz=document.getElementById('luz'), sombra=document.getElementById('sombra'), haz=document.getElementById('haz');
 var L=[{lamp:document.getElementById('lampIzq'),cono:document.getElementById('cono1'),charco:document.getElementById('charco1'),fx:0.2,vel:0.47,fase:0,vy:0.33},
@@ -789,7 +806,7 @@ function medidas(){
   var cw=W<700? W*0.19 : W*0.28;
   // cerrado: el telón izquierdo llega hasta "¡AL / CONS" y el derecho cubre "TÁ / NDO!"
   var izqCerrado=(W-w)/2+0.31*w, derCerrado=(W-w)/2+(1-0.695)*w;
-  var ap=APERTURA_MANUAL!==null? APERTURA_MANUAL/100 : Math.max(0,Math.min(1,(DIAS_TOTALES-DIAS)/DIAS_TOTALES));
+  var ap=AVANCE;
   var cwI=izqCerrado+(cw-izqCerrado)*ap, cwD=derCerrado+(cw-derCerrado)*ap;
   raiz.setProperty('--cwI',cwI+'px'); raiz.setProperty('--cwD',cwD+'px'); raiz.setProperty('--cw',Math.min(cwI,cwD)+'px');
   var cv=Math.min((W-2*cw)*(W<700?0.86:0.5), 430); raiz.setProperty('--cv',cv+'px'); CV={cv:cv,ch:cv*450/580,ph:ph};
@@ -797,6 +814,12 @@ function medidas(){
   haz.setAttribute('viewBox','0 0 '+W+' '+H);
 }
 medidas(); addEventListener('resize',medidas);
+// la escena de atrás se ilumina un poco más cada día
+(function(){
+  var a=AVANCE, ob=document.querySelector('#silueta .obra');
+  if(ob) ob.style.filter='brightness('+(0.04+0.96*Math.pow(a,0.85)).toFixed(3)+') saturate('+(0.4+0.6*a).toFixed(2)+')';
+  sombra.style.background='rgba(0,0,0,'+(0.62*(1-a)).toFixed(3)+')';
+})();
 // ---------- Días que faltan (hora de México) ----------
 (function(){
   var p=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Monterrey',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date()).split('-');
@@ -1507,15 +1530,35 @@ function pintarGrupos(){
 
 /* ---------- Logros ---------- */
 var SB_MURAL={url:'https://gdmbgqpnkixahyrnbnwg.supabase.co',key:'sb_publishable_yklpyDTvFTVefjXAu3XdXA_DZdtyWgR'};
+var LG_ICO={
+// boleto dorado con moño navideño
+dentro:'<g transform="rotate(-12 50 54)"><path d="M14 36 h72 v12 a6 6 0 0 0 0 12 v12 h-72 v-12 a6 6 0 0 0 0-12z" fill="#f2c14e" stroke="#c9952e" stroke-width="2.5"/><path d="M62 36 v36" stroke="#c9952e" stroke-width="2" stroke-dasharray="4 3"/><text x="38" y="61" text-anchor="middle" font-family="Luckiest Guy,sans-serif" font-size="13" fill="#9a0b22">POSADA</text><polygon points="74,48 76,53 81,53 77,56 79,61 74,58 69,61 71,56 67,53 72,53" fill="#c8102e"/></g><path d="M50 28 C40 16 28 22 34 30 C38 34 46 32 50 28Z M50 28 C60 16 72 22 66 30 C62 34 54 32 50 28Z" fill="#c8102e"/><circle cx="50" cy="28" r="5" fill="#9a0b22"/><path d="M47 31 l-6 12 M53 31 l6 12" stroke="#c8102e" stroke-width="4" stroke-linecap="round"/>',
+// duende coleccionando QR en su costal
+coleccionista:'<path d="M58 44 Q80 40 82 64 Q84 86 62 86 Q44 86 46 66 Q46 50 58 44Z" fill="#a86b3c"/><path d="M52 50 Q64 54 78 48" stroke="#7d4a25" stroke-width="3" fill="none"/><g fill="#2a1d1f"><rect x="58" y="58" width="16" height="16" fill="#fff" rx="2"/><rect x="60" y="60" width="5" height="5"/><rect x="67" y="60" width="5" height="5"/><rect x="60" y="67" width="5" height="5"/><rect x="68" y="68" width="3" height="3"/></g><circle cx="36" cy="58" r="14" fill="#f6c9a8"/><path d="M22 54 L12 46 L23 62Z M50 54 L58 46 L49 62Z" fill="#f6c9a8"/><path d="M20 50 Q30 18 60 14 Q44 26 50 50Z" fill="#2f9e62"/><rect x="19" y="46" width="34" height="7" rx="3.5" fill="#c8102e"/><circle cx="60" cy="15" r="4" fill="#f2c14e"/><circle cx="31" cy="58" r="2.2" fill="#2a1d1f"/><circle cx="41" cy="58" r="2.2" fill="#2a1d1f"/><path d="M31 65 Q36 69 41 65" stroke="#7a2b2b" stroke-width="2" fill="none" stroke-linecap="round"/><rect x="26" y="72" width="20" height="16" rx="6" fill="#2f9e62"/><circle cx="48" cy="76" r="4" fill="#f6c9a8"/>',
+// cámara con gorro de Santa
+fotografo:'<rect x="16" y="40" width="68" height="44" rx="9" fill="#3a3f4a"/><rect x="30" y="33" width="20" height="10" rx="3" fill="#3a3f4a"/><rect x="16" y="48" width="68" height="6" fill="#c8102e"/><circle cx="52" cy="62" r="16" fill="#1d2129" stroke="#9aa5b2" stroke-width="3"/><circle cx="52" cy="62" r="9" fill="#5b6ee1"/><circle cx="48" cy="58" r="3" fill="#fff" opacity=".7"/><rect x="70" y="43" width="9" height="5" rx="2" fill="#f2c14e"/><path d="M50 36 Q56 8 80 12 Q94 16 94 34 L86 36 Q84 24 76 24 Q82 30 84 36Z" fill="#c8102e"/><rect x="46" y="32" width="42" height="8" rx="4" fill="#fff"/><circle cx="93" cy="34" r="5" fill="#fff"/>',
+// reno con antifaz
+infiltrado:'<path d="M34 34 L26 12 M29 20 L19 17 M28 16 L31 6 M66 34 L74 12 M71 20 L81 17 M72 16 L69 6" stroke="#7d4a25" stroke-width="5" stroke-linecap="round" fill="none"/><ellipse cx="24" cy="44" rx="10" ry="5" fill="#8a5530" transform="rotate(-25 24 44)"/><ellipse cx="76" cy="44" rx="10" ry="5" fill="#8a5530" transform="rotate(25 76 44)"/><circle cx="50" cy="54" r="26" fill="#a86b3c"/><ellipse cx="50" cy="68" rx="14" ry="10" fill="#d9a07a"/><path d="M22 48 Q50 38 78 48 Q78 60 66 60 Q58 60 54 54 L46 54 Q42 60 34 60 Q22 60 22 48Z" fill="#1d1d22"/><path d="M78 48 L90 42 M78 52 L91 54" stroke="#1d1d22" stroke-width="3" stroke-linecap="round"/><ellipse cx="36" cy="51" rx="5" ry="3.5" fill="#fff"/><ellipse cx="64" cy="51" rx="5" ry="3.5" fill="#fff"/><circle cx="37" cy="51" r="2" fill="#2a1d1f"/><circle cx="65" cy="51" r="2" fill="#2a1d1f"/><circle cx="50" cy="63" r="6" fill="#e02a45"/><circle cx="48" cy="61" r="2" fill="#fff" opacity=".7"/><path d="M44 72 Q50 76 56 72" stroke="#5e3519" stroke-width="2" fill="none" stroke-linecap="round"/>',
+// misión cumplida: regalo con palomita
+mision:'<rect x="18" y="44" width="54" height="42" rx="6" fill="#c8102e"/><rect x="14" y="34" width="62" height="14" rx="5" fill="#e02a45"/><rect x="40" y="34" width="10" height="52" fill="#f2c14e"/><path d="M45 35 C34 18 20 24 28 33 Z M45 35 C56 18 70 24 62 33 Z" fill="#f2c14e"/><circle cx="72" cy="66" r="20" fill="#2f9e62" stroke="#fff" stroke-width="4"/><path d="M62 66 l7 7 l13 -14" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><polygon points="22,14 24,19 29,19 25,22 27,27 22,24 17,27 19,22 15,19 20,19" fill="#fff3c4"/>',
+// estilista: muñeco de nieve arreglándose con bufanda y pincel
+estilista:'<circle cx="46" cy="58" r="24" fill="#fff" stroke="#cfe0ec" stroke-width="2"/><rect x="28" y="16" width="36" height="22" rx="3" fill="#2a1d1f"/><rect x="20" y="36" width="52" height="7" rx="3" fill="#2a1d1f"/><rect x="28" y="30" width="36" height="5" fill="#c8102e"/><circle cx="38" cy="54" r="2.6" fill="#2a1d1f"/><circle cx="54" cy="54" r="2.6" fill="#2a1d1f"/><path d="M45 59 L60 63 L45 64Z" fill="#f28c28"/><path d="M36 68 Q46 74 56 68" stroke="#2a1d1f" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-dasharray="1 4"/><rect x="24" y="76" width="44" height="10" rx="5" fill="#2f9e62"/><path d="M30 76 v10 M38 76 v10 M46 76 v10 M54 76 v10 M62 76 v10" stroke="#fff" stroke-width="2"/><g transform="rotate(35 80 50)"><rect x="76" y="30" width="8" height="34" rx="3" fill="#a86b3c"/><rect x="75" y="26" width="10" height="8" fill="#c9d1d9"/><path d="M75 26 Q80 10 85 26Z" fill="#e02a45"/></g><circle cx="86" cy="22" r="3" fill="#f2c14e"/><circle cx="76" cy="14" r="2" fill="#7fd3ff"/>',
+// buen jugador: estrella con listón y 500
+jugador:'<path d="M34 60 L24 92 L36 86 L42 96 L48 66Z" fill="#c8102e"/><path d="M66 60 L76 92 L64 86 L58 96 L52 66Z" fill="#2f9e62"/><polygon points="50,8 61,36 92,37 67,55 76,85 50,68 24,85 33,55 8,37 39,36" fill="#f2c14e" stroke="#c9952e" stroke-width="3" stroke-linejoin="round"/><circle cx="50" cy="48" r="16" fill="#fff3c4"/><text x="50" y="54" text-anchor="middle" font-family="Luckiest Guy,sans-serif" font-size="15" fill="#c8102e">500</text>',
+// magnate: costal de Santa con monedas de oro
+magnate:'<path d="M30 40 Q14 60 22 80 Q30 94 50 94 Q70 94 78 80 Q86 60 70 40Z" fill="#c8102e"/><path d="M30 40 Q50 32 70 40" stroke="#9a0b22" stroke-width="3" fill="none"/><rect x="34" y="30" width="32" height="12" rx="6" fill="#f2c14e"/><path d="M38 30 Q36 16 50 18 Q64 16 62 30" fill="#fff"/><text x="50" y="76" text-anchor="middle" font-family="Luckiest Guy,sans-serif" font-size="24" fill="#f2c14e">$</text><g stroke="#c9952e" stroke-width="2"><circle cx="16" cy="84" r="9" fill="#f7d774"/><circle cx="84" cy="80" r="10" fill="#f7d774"/><circle cx="88" cy="62" r="7" fill="#f7d774"/></g><text x="84" y="85" text-anchor="middle" font-family="Luckiest Guy,sans-serif" font-size="11" fill="#9c7420">$</text><polygon points="14,40 16,45 21,45 17,48 19,53 14,50 9,53 11,48 7,45 12,45" fill="#fff3c4"/>'
+};
+function lgIcono(id){ return '<svg viewBox="0 0 100 100" aria-hidden="true">'+(LG_ICO[id]||'')+'</svg>'; }
+
 var LOGROS=[
-  {id:'dentro',ico:'🎟️',t:'¡Ya estoy dentro!',d:'Únete a la posada desde la app.'},
-  {id:'coleccionista',ico:'🧩',t:'El coleccionista',d:'Escanea 5 códigos QR diferentes.',meta:5},
-  {id:'fotografo',ico:'📸',t:'El fotógrafo',d:'Sube 3 fotos o cartas al mural.',meta:3},
-  {id:'infiltrado',ico:'🕵️',t:'El infiltrado',d:'Encuentra un QR secreto.'},
-  {id:'cazarregalos',ico:'🎁',t:'El cazarregalos',d:'Gana un regalo misterioso.'},
-  {id:'estilista',ico:'🎨',t:'El estilista',d:'Personaliza tu avatar.'},
-  {id:'sobreviviente',ico:'🛡️',t:'El sobreviviente',d:'Llega a la subasta final con puntos.'},
-  {id:'magnate',ico:'💰',t:'El magnate',d:'Gana una subasta.'}];
+  {id:'dentro',t:'¡Ya estoy dentro!',d:'Únete a la posada desde la app.'},
+  {id:'coleccionista',t:'El coleccionista',d:'Escanea al menos 3 códigos QR diferentes (no cuenta el de bienvenida).',meta:3},
+  {id:'fotografo',t:'El fotógrafo',d:'Sube al menos 2 fotos o cartas al mural.',meta:2},
+  {id:'infiltrado',t:'El infiltrado',d:'Encuentra un QR secreto escondido en la posada.'},
+  {id:'mision',t:'Misión cumplida',d:'Completa tu bonus de puntos extra y que te lo aprueben.'},
+  {id:'estilista',t:'El estilista',d:'Personaliza tu avatar.'},
+  {id:'jugador',t:'El buen jugador',d:'Junta al menos 500 puntos en la posada.',meta:500},
+  {id:'magnate',t:'El magnate',d:'Gana una subasta.'}];
 var LG={progreso:{},ok:{}}, lgListo=false;
 function lgGuardados(){ try{ return JSON.parse(localStorage.getItem('posada_logros')||'null'); }catch(e){ return null; } }
 function lgGuardar(o){ try{ localStorage.setItem('posada_logros',JSON.stringify(o)); }catch(e){} }
@@ -1531,8 +1574,8 @@ function revisarLogros(){
     if(!o||!o.registrado) return;
     contarFotos(o.apodo||datos.nombre,function(fotos){
       var prev=LG.progreso.fotografo||0;
-      var p={dentro:1,coleccionista:o.codigos||0,fotografo:fotos==null?prev:fotos,infiltrado:o.secreto?1:0,cazarregalos:o.misterioso?1:0,
-             estilista:avatarPropio()?1:0,sobreviviente:o.sobreviviente?1:0,magnate:o.magnate?1:0};
+      var p={dentro:1,coleccionista:o.codigos||0,fotografo:fotos==null?prev:fotos,infiltrado:o.secreto?1:0,mision:o.mision?1:0,
+             estilista:avatarPropio()?1:0,jugador:Number(o.ganados)||0,magnate:o.magnate?1:0};
       var guard=lgGuardados(), nuevos=[];
       LOGROS.forEach(function(l){ var ok=p[l.id]>=(l.meta||1) || !!(guard&&guard[l.id]); if(ok&&!(guard&&guard[l.id])) nuevos.push(l); LG.ok[l.id]=ok; });
       LG.progreso=p;
@@ -1555,9 +1598,9 @@ function pintarLogros(){
   $('apLgRes').textContent=lgListo?'Llevas '+lgCuenta()+' de '+LOGROS.length+' logros. ¡Sigue participando para desbloquear más!':'Revisando tus logros…';
   g.innerHTML=LOGROS.map(function(l){
     var ok=!!LG.ok[l.id], n=Math.min(LG.progreso[l.id]||0,l.meta||1);
-    return '<div class="ap-logro'+(ok?' ok':'')+'"><div class="ap-medalla" aria-hidden="true">'+(ok?l.ico:'🔒')+'</div>'+
+    return '<div class="ap-logro'+(ok?' ok':'')+'"><div class="ap-medalla" aria-hidden="true">'+lgIcono(l.id)+(ok?'':'<span class="ap-candado">🔒</span>')+'</div>'+
       '<b>'+l.t+'</b><small>'+l.d+'</small>'+
-      (l.meta&&!ok?'<div class="ap-lgbar" role="progressbar" aria-valuemin="0" aria-valuemax="'+l.meta+'" aria-valuenow="'+n+'"><i style="width:'+(n/l.meta*100)+'%"></i></div><em>'+n+' / '+l.meta+'</em>':'')+
+      (l.meta&&!ok?'<div class="ap-lgbar" role="progressbar" aria-valuemin="0" aria-valuemax="'+l.meta+'" aria-valuenow="'+n+'"><i style="width:'+(n/l.meta*100)+'%"></i></div><em>'+fmt(n)+' / '+fmt(l.meta)+(l.id==='jugador'?' pts':'')+'</em>':'')+
       (ok?'<em class="sello">¡Desbloqueado!</em>':'')+'</div>';
   }).join('');
 }
@@ -1682,7 +1725,7 @@ function siguienteAviso(){
   var d=document.createElement('div'); d.className='ap-notif'; d.setAttribute('role','alertdialog'); d.setAttribute('aria-labelledby','apNotifT');
   if(typeof s==='object'&&s.logro){
     var L=s.logro;
-    d.innerHTML='<div class="ap-notif-caja"><div class="ap-notif-cab">🏅 ¡LOGRO DESBLOQUEADO!</div><div class="ap-notif-ico oro">'+L.ico+'</div>'+
+    d.innerHTML='<div class="ap-notif-caja"><div class="ap-notif-cab">🏅 ¡LOGRO DESBLOQUEADO!</div><div class="ap-notif-ico oro ap-lgnotif">'+lgIcono(L.id)+'</div>'+
       '<h3 id="apNotifT">'+L.t+'</h3><p>'+L.d+'</p><button class="boton" type="button" data-ir="1">Ver mis logros</button><button class="boton secundario" type="button">¡Genial!</button></div>';
   } else {
   var t=TILES.filter(function(x){return x.s===s;})[0];
