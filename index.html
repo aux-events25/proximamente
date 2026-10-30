@@ -457,6 +457,29 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:Nunit
 .ap-tj-palomita{width:110px;height:110px;margin:0 auto 12px;border-radius:50%;background:#1f7a4d;color:#fff;display:grid;place-items:center;font:900 66px Nunito,sans-serif;box-shadow:0 0 0 10px #e3f4ea}
 .ap-tj-ok-c b{display:block;font-family:"Luckiest Guy",sans-serif;font-weight:400;font-size:36px;color:#1f7a4d;letter-spacing:.02em}
 .ap-tj-ok-c span{display:block;margin-top:6px;font:900 18px Nunito,sans-serif;color:#2a1d1f}
+
+.ap-tile.tarjeta-t{background:linear-gradient(135deg,#e0a92e,#9c7420)}
+.ap-logrosbtn span{margin-left:auto}
+.ap-abajo{margin-top:16px}
+.ap-histbtn{display:grid;grid-template-columns:auto 1fr auto;grid-template-rows:auto auto;align-items:center;column-gap:12px;width:100%;text-align:left;border:0;border-radius:18px;
+  padding:14px 16px;background:#fffaf3;color:#2a1d1f;cursor:pointer;box-shadow:0 10px 22px -14px rgba(0,0,0,.7)}
+.ap-histbtn>span{grid-row:1/3;font-size:30px}.ap-histbtn b{font:900 18px Nunito,sans-serif}.ap-histbtn small{grid-column:2;font:700 13px Nunito,sans-serif;color:#6e5f61}
+.ap-histbtn i{grid-row:1/3;grid-column:3;font-style:normal;font:900 24px Nunito,sans-serif;color:#c9bfb5}
+.ap-histbtn:focus-visible{outline:3px solid #f2c14e;outline-offset:3px}
+.ap-abajo .ap-resumenbtn{color:#ffe08a;text-decoration-color:rgba(255,224,138,.4);margin-top:12px}
+.ap-abajo .ap-resumenbtn:hover{background:rgba(255,255,255,.08)}
+.ap-hres{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.ap-hres div{background:#fffaf3;border-radius:16px;padding:12px 8px;text-align:center;box-shadow:0 8px 18px -12px rgba(0,0,0,.7)}
+.ap-hres small{display:block;font:800 12px Nunito,sans-serif;color:#6e5f61}.ap-hres b{font-family:"Luckiest Guy",sans-serif;font-weight:400;font-size:26px;color:#c8102e}
+.ap-hres .g b{color:#1f7a4d}.ap-hres .r b{color:#9c7420}
+.ap-hsec{margin-bottom:14px}.ap-hsec h3{margin:4px 0 10px;font:900 18px Nunito,sans-serif;color:#c8102e}
+.ap-hlista{list-style:none;margin:0;padding:0}
+.ap-hlista li{display:grid;grid-template-columns:36px 1fr auto;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #efe3d6}
+.ap-hlista li:last-child{border-bottom:0}
+.ap-hlista i{font-style:normal;font-size:24px;text-align:center}
+.ap-hlista b{display:block;font:900 15px Nunito,sans-serif;color:#2a1d1f}.ap-hlista small{display:block;font:700 12px/1.35 Nunito,sans-serif;color:#6e5f61}
+.ap-hlista em{font-style:normal;font:900 16px Nunito,sans-serif;white-space:nowrap}.ap-hlista em.pos{color:#1f7a4d}.ap-hlista em.neg{color:#c8102e}
+.ap-htotal{margin:10px 0 0;text-align:right;font:800 14px Nunito,sans-serif;color:#6e5f61}.ap-htotal b{color:#c8102e}
 </style>
 </head>
 <body>
@@ -1359,7 +1382,7 @@ requestAnimationFrame(cuadro);
    Prueba sin encenderla: agrega ?app=1 al link (y ?app=0 para ver el telón). */
 (function(){
 var API='https://script.google.com/macros/s/AKfycbz3BdSkfxvH9OzpXBI4hdP0D5GQu6DWrOJOsajLLxBc3F9gvqqaVgL_Pq5Nra9zPg1s/exec';
-var modoListo=false, LLAVE='posada_jugador', activa=false, datos=null, vista='', F={qr:false,mural:false,premios:false,reto:false,terminado:false};
+var modoListo=false, LLAVE='posada_jugador', activa=false, datos=null, vista='', F={qr:false,mural:false,premios:false,reto:false,tarjeta:false,terminado:false};
 var forzar=new URLSearchParams(location.search).get('app');
 var GORRO='<svg viewBox="0 0 120 80" aria-hidden="true"><path d="M10 62 C16 26 52 4 88 8 C108 11 118 26 116 46 L102 50 C98 36 90 30 80 31 C90 44 96 54 98 62 Z" fill="#c8102e"/><rect x="2" y="56" width="100" height="22" rx="11" fill="#fff"/><circle cx="110" cy="48" r="11" fill="#fff"/></svg>';
 function $(i){return document.getElementById(i);}
@@ -1661,7 +1684,7 @@ function revisarLogros(){
   },function(){});
 }
 function lgCuenta(){ return LOGROS.filter(function(l){return LG.ok[l.id];}).length; }
-function pintarLogrosResumen(){ var b=$('apLogrosBtn'); if(b) b.querySelector('b').textContent=lgListo?(lgCuenta()+' / '+LOGROS.length):'…'; }
+function pintarLogrosResumen(){ /* el botón ya no muestra el conteo */ }
 function logros(){
   vista='logros'; verEscena('');
   poner(volver()+'<h2 class="ap-titsec">🏅 Mis logros</h2><p class="ap-lgres" id="apLgRes"></p><div class="ap-lggrid" id="apLgGrid"></div>');
@@ -1958,6 +1981,31 @@ function tarjetaCompra(u){
   setTimeout(function(){ c.classList.add('fuera'); },3800); setTimeout(function(){ c.remove(); },4300);
 }
 
+/* ---------- 📒 Mi historial (cómo gané mis puntos y en qué los gasté) ---------- */
+var HIST_ICO={bienvenida:'🎉',qr:'📷',misterioso:'🎁',reto:'⭐',extra:'✨',ajuste:'✏️',otro:'🎄'};
+function fechaCorta(iso){ if(!iso) return ''; var d=new Date(iso); if(isNaN(d)) return ''; return d.toLocaleString('es-MX',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'}); }
+function miHistorial(){
+  vista='historial'; verEscena('');
+  poner(volver()+'<h2 class="ap-titsec">📒 Mi historial</h2><div id="apHist"><section class="tarjeta"><p class="ap-mini">Cargando tu historial…</p></section></div>');
+  $('apVolver').onclick=function(){ inicio({}); };
+  llamar({api:'historial',clave:clave()},function(o){
+    if(vista!=='historial') return;
+    if(!o||!o.movimientos){ $('apHist').innerHTML='<section class="tarjeta"><p class="ap-mini">No se pudo cargar tu historial. Toca ↻ para intentar de nuevo.</p></section>'; return; }
+    var h='<div class="ap-hres">'+
+      '<div><small>Disponibles</small><b>'+fmt(o.disponibles)+'</b></div>'+
+      '<div class="g"><small>Ganados</small><b>+'+fmt(o.ganados)+'</b></div>'+
+      '<div class="r"><small>Gastados</small><b>−'+fmt(o.gastados)+'</b></div></div>';
+    h+='<section class="tarjeta ap-hsec"><h3>⭐ Cómo gané mis puntos</h3>'+(o.movimientos.length?'<ul class="ap-hlista">'+o.movimientos.map(function(m){
+        return '<li><i aria-hidden="true">'+(HIST_ICO[m.tipo]||'🎄')+'</i><div><b>'+esc(m.titulo)+'</b><small>'+esc(m.detalle||'')+(m.fecha?' · '+fechaCorta(m.fecha):'')+'</small></div>'+
+          '<em class="'+(m.puntos<0?'neg':'pos')+'">'+(m.puntos<0?'−':'+')+fmt(Math.abs(m.puntos))+'</em></li>'; }).join('')+'</ul>':'<p class="ap-mini">Todavía no tienes movimientos.</p>')+'</section>';
+    h+='<section class="tarjeta ap-hsec"><h3>🎁 Mis premios</h3>'+(o.premios.length?'<ul class="ap-hlista">'+o.premios.map(function(p){
+        return '<li><i aria-hidden="true">🎁</i><div><b>'+esc(p.producto)+'</b><small>'+esc(p.detalle||'')+(p.fecha?' · '+fechaCorta(p.fecha):'')+'</small></div><em class="neg">−'+fmt(p.puntos)+'</em></li>'; }).join('')+
+        '</ul><p class="ap-htotal">Total gastado en premios: <b>'+fmt(o.gastados)+' pts</b></p>':'<p class="ap-mini">Aún no has canjeado premios. ¡Usa tus puntos en la subasta! 🎄</p>')+'</section>';
+    h+='<button class="ap-resumenbtn" id="apResumenBtn2" type="button">📲 Mi resumen de la posada</button>';
+    $('apHist').innerHTML=h; $('apResumenBtn2').onclick=miResumen;
+  },function(){ if(vista==='historial') $('apHist').innerHTML='<section class="tarjeta"><p class="ap-mini">Sin conexión. Toca ↻ para intentar de nuevo.</p></section>'; });
+}
+
 /* ---------- Inicio (menú) ---------- */
 var QR_ICONO='<svg viewBox="0 0 29 29" aria-hidden="true"><path fill="#fff" d="M0 0h9v9H0zM2 2v5h5V2zM3 3h3v3H3zM20 0h9v9h-9zM22 2v5h5V2zM23 3h3v3h-3zM0 20h9v9H0zM2 22v5h5v-5zM3 23h3v3H3zM11 0h2v2h-2zM14 1h2v3h-2zM11 4h2v3h-2zM16 5h2v2h-2zM12 9h3v2h-3zM17 9h2v4h-2zM0 11h3v2H0zM5 11h4v2H5zM10 12h2v3h-2zM13 13h3v2h-3zM20 11h3v2h-3zM25 11h4v2h-4zM1 15h4v2H1zM7 15h2v3H7zM18 15h3v2h-3zM23 15h2v4h-2zM27 15h2v3h-2zM11 17h4v2h-4zM16 18h2v3h-2zM20 19h2v2h-2zM11 21h2v2h-2zM14 22h3v2h-3zM20 22h3v3h-3zM25 21h4v2h-4zM11 25h4v2h-4zM17 26h3v3h-3zM24 25h2v4h-2zM27 26h2v3h-2z"/></svg>';
 var TILES=[
@@ -1968,7 +2016,9 @@ var TILES=[
   {s:'premios',cls:'oro',ico:'🎁',t:'Premios',d:'Lo que ganaste en la subasta y tus puntos',off:'Los premios se abren en la subasta 🎁',
    pista:'🎁',frase:'Próximamente',nTit:'¡Ya puedes ver tus premios!',nTxt:'Revisa lo que ganaste en la subasta y tus puntos.'},
   {s:'reto',cls:'azul',ico:'⭐',t:'Bonus: puntos extra',d:'Descubre tu misión secreta y gana 100 puntos',off:'Tu bonus de puntos extra se desbloquea más tarde ⭐',
-   pista:'⭐',frase:'Bonus: puntos extra',nTit:'¡Desbloqueaste tu bonus de puntos extra!',nTxt:'Ábrelo para descubrir tu misión secreta y ganar 100 puntos.'}];
+   pista:'⭐',frase:'Bonus: puntos extra',nTit:'¡Desbloqueaste tu bonus de puntos extra!',nTxt:'Ábrelo para descubrir tu misión secreta y ganar 100 puntos.'},
+  {s:'tarjeta',cls:'tarjeta-t',ico:'💳',t:'Mi tarjeta',d:'Úsala para reclamar tu premio en la subasta',off:'Tu tarjeta se activa en la subasta 💳',
+   pista:'💳',frase:'Mi tarjeta',nTit:'¡Tu tarjeta ya está activa!',nTxt:'Muéstrala en la subasta para reclamar tu premio.'}];
 function inicio(op){
   op=op||{}; vista='inicio'; detenerCamara(); verEscena('normal');
   var d=datos||{};
@@ -1977,17 +2027,18 @@ function inicio(op){
     '<section class="tarjeta"><div class="ap-jugador"><button class="ap-avatarbtn" id="apAvatar" type="button" aria-label="Personalizar mi avatar">'+avatarSVG(avLeer())+'<span class="ap-lapiz" aria-hidden="true">✏️</span></button>'+
     '<div><div class="ap-hola">¡Feliz Navidad,</div><div class="ap-nombre">'+esc(d.nombre)+'!</div><div class="ap-id">Tu ID: '+esc(d.id||'')+'</div>'+(avatarPropio()?'':'<div class="ap-tipav">✨ Personaliza tu avatar</div>')+'</div></div>'+
     '<div class="ap-puntos"><b id="apPts">'+fmt(d.total)+'</b><span>puntos disponibles</span></div>'+
-    '<p class="ap-mini" id="apMini">'+mini(d)+'</p><div id="apBono"></div>'+
-    '<button class="ap-tjbtn" id="apTjBtn" type="button">🎟️ Mi tarjeta <span>úsala para reclamar tu premio</span></button>'+
-    '<button class="ap-logrosbtn" id="apLogrosBtn" type="button">🏅 Mis logros <b>'+(lgListo?(lgCuenta()+' / '+LOGROS.length):'…')+'</b><span aria-hidden="true">›</span></button>'+
-    '<button class="ap-resumenbtn" id="apResumenBtn" type="button">📲 Mi resumen de la posada</button></section>'+
+    '<div id="apBono"></div>'+
+    '<button class="ap-logrosbtn" id="apLogrosBtn" type="button">🏅 Mis logros<span aria-hidden="true">›</span></button></section>'+
     '<nav class="ap-menu" aria-label="Menú de la posada">'+TILES.map(function(t){
       return '<button class="ap-tile '+t.cls+(F[t.s]?'':' bloqueado')+'" type="button" data-s="'+t.s+'" aria-label="'+t.t+'">'+
         '<span class="ap-abierto"><i>'+t.ico+'</i><span><b>'+t.t+'</b><small>'+t.d+'</small></span></span>'+
         '<span class="ap-cerrado" aria-hidden="true"><i class="ap-pista">'+t.pista+'</i><span><b>'+t.frase+'</b><small>🔒 Se desbloquea durante la posada</small></span></span></button>';
-    }).join('')+'</nav><p class="ap-pie">Deja esta app abierta toda la noche 🎄</p>');
+    }).join('')+'</nav>'+
+    '<div class="ap-abajo"><button class="ap-histbtn" id="apHistBtn" type="button"><span aria-hidden="true">📒</span><b>Mi historial</b><small>Cómo ganaste tus puntos y tus premios</small><i aria-hidden="true">›</i></button>'+
+    '<button class="ap-resumenbtn" id="apResumenBtn" type="button">📲 Mi resumen de la posada</button></div>'+
+    '<p class="ap-pie">Deja esta app abierta toda la noche 🎄</p>');
   document.querySelectorAll('.ap-tile').forEach(function(b){ b.onclick=function(){ abrir(b.getAttribute('data-s')); }; });
-  $('apAvatar').onclick=editorAvatar; $('apLogrosBtn').onclick=logros; $('apTjBtn').onclick=miTarjeta; $('apResumenBtn').onclick=miResumen;
+  $('apAvatar').onclick=editorAvatar; $('apLogrosBtn').onclick=logros; $('apHistBtn').onclick=miHistorial; $('apResumenBtn').onclick=miResumen;
   if(op.desde!=null) contador($('apPts'),Number(op.desde),Number(d.total||0));
   if(op.bono>0){ $('apBono').innerHTML='<div class="ap-bono">🎉 ¡+'+fmt(op.bono)+' puntos de bienvenida!</div>'; confeti(); }
   if(op.premio) $('apBono').innerHTML='<div class="ap-bono">🎁 ¡Ganaste <b>'+esc(op.premio)+'</b> en la subasta! Revisa tus premios.</div>';
@@ -2030,7 +2081,7 @@ function siguienteAviso(){
 function abrir(s){
   var t=TILES.filter(function(x){return x.s===s;})[0];
   if(!F[s]){ aviso(t.off); return; }
-  if(s==='qr') escaner(); else if(s==='mural') mural(); else if(s==='premios') premios(); else if(s==='reto') miReto();
+  if(s==='qr') escaner(); else if(s==='mural') mural(); else if(s==='premios') premios(); else if(s==='reto') miReto(); else if(s==='tarjeta') miTarjeta();
 }
 
 /* ---------- Escáner de QR ---------- */
@@ -2201,9 +2252,9 @@ function revisarModo(){
     }
     if(!activa){ if(o.app) mostrarApp(o); return; }
     if(o.app===false&&forzar!=='1'){ location.reload(); return; }
-    var nuevos=['qr','mural','premios','reto'].filter(function(k){return !!o[k]&&!F[k];});
-    var cambio=['qr','mural','premios','reto'].some(function(k){return !!o[k]!==F[k];}), finCambio=!!o.terminado!==F.terminado;
-    F={qr:!!o.qr,mural:!!o.mural,premios:!!o.premios,reto:!!o.reto,terminado:!!o.terminado};
+    var nuevos=['qr','mural','premios','reto','tarjeta'].filter(function(k){return !!o[k]&&!F[k];});
+    var cambio=['qr','mural','premios','reto','tarjeta'].some(function(k){return !!o[k]!==F[k];}), finCambio=!!o.terminado!==F.terminado;
+    F={qr:!!o.qr,mural:!!o.mural,premios:!!o.premios,reto:!!o.reto,tarjeta:!!o.tarjeta,terminado:!!o.terminado};
     if(finCambio&&vista==='inicio'){ inicio({}); return; }
     if(cambio) pintarTiles(nuevos);
     if(modoListo&&datos&&datos.nombre) nuevos.forEach(notificar);
@@ -2214,7 +2265,7 @@ function revisarModo(){
 /* ---------- Encender / apagar la app ---------- */
 function mostrarApp(m){
   if(activa) return; activa=true;
-  if(m){ F={qr:!!m.qr,mural:!!m.mural,premios:!!m.premios,reto:!!m.reto,terminado:!!m.terminado}; modoListo=true; }
+  if(m){ F={qr:!!m.qr,mural:!!m.mural,premios:!!m.premios,reto:!!m.reto,tarjeta:!!m.tarjeta,terminado:!!m.terminado}; modoListo=true; }
   try{ if(window.apagarSonidoTelon) window.apagarSonidoTelon(); }catch(e){}
   window.__appActiva=true;
   ['teatro','sonido','refrescarTelon','versionPagina'].forEach(function(id){var el=$(id); if(el) el.style.display='none';});
