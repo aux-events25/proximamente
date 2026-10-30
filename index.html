@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <title>Algo se está construyendo…</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="512x512" href="icono-512.png">
@@ -415,6 +418,8 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:Nunit
 .ap-res-caja{width:min(92vw,420px);margin:16px auto;background:#fffaf3;border-radius:22px;padding:14px;text-align:center;box-shadow:0 26px 50px -18px rgba(0,0,0,.8)}
 .ap-res-caja img{display:block;width:100%;border-radius:14px;-webkit-touch-callout:default}
 .ap-res-caja p{margin:10px 4px 4px;color:#6e5f61;font-weight:700;font-size:14px}
+
+#versionPagina{position:fixed;left:8px;bottom:calc(4px + env(safe-area-inset-bottom));z-index:60;font:700 10px Nunito,sans-serif;color:rgba(255,255,255,.35);pointer-events:none}
 </style>
 </head>
 <body>
@@ -778,6 +783,7 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:Nunit
   <svg class="lampara" id="lampDer" viewBox="0 0 80 70"><rect x="34" y="0" width="12" height="18" fill="#222"/><path d="M14 24 H66 L58 60 H22 Z" fill="#2b2f36" stroke="#111" stroke-width="3"/><ellipse cx="40" cy="60" rx="20" ry="6" fill="#fff6c4"/></svg>
   
   
+  <span id="versionPagina" aria-hidden="true">v2026.10.30</span>
   <button id="refrescarTelon" type="button" aria-label="Actualizar la página" onclick="location.reload()">↻</button>
   <button id="sonido" type="button" aria-pressed="false"><span class="ico">🔔</span><span class="txt">Toca para activar el sonido</span></button>
 </div>
@@ -1325,7 +1331,8 @@ function leerCookie(){var m=document.cookie.match(/(?:^|; )posada_jugador=([a-z0
 function guardarClave(c){try{localStorage.setItem(LLAVE,c);}catch(e){} try{document.cookie=LLAVE+'='+c+'; max-age=31536000; path=/; SameSite=Lax; Secure';}catch(e){}}
 function clave(){var c=null;try{c=localStorage.getItem(LLAVE);}catch(e){} if(!c)c=leerCookie(); if(!c)c='p'+Date.now().toString(36)+Math.random().toString(36).slice(2,10); guardarClave(c); return c;}
 function llamar(params,ok,mal){
-  fetch(API+'?'+new URLSearchParams(params).toString()).then(function(r){return r.json();}).then(ok)
+  params=Object.assign({},params,{_t:Date.now()});
+  fetch(API+'?'+new URLSearchParams(params).toString(),{cache:'no-store'}).then(function(r){return r.json();}).then(ok)
     .catch(function(){ if(mal) mal(); else aviso('Sin conexión. Revisa tu internet e intenta de nuevo.'); });
 }
 function poner(h){ $('apHoja').innerHTML=h; window.scrollTo(0,0); var a=$('appPosada'); if(a) a.scrollTop=0; }
@@ -1438,7 +1445,7 @@ function registro(error){
     btn.disabled=true; btn.textContent='Registrando…';
     llamar({api:'registrar',clave:clave(),nombre:a,opcion:''},function(o){
       if(o&&o.confirmar){ confirmar(a,o.candidatos||[]); return; }
-      if(!o||!o.nombre){ btn.disabled=false; btn.textContent='🎁 Unirme y sumar puntos'; $('apAyuda').textContent='No se pudo registrar, intenta de nuevo.'; $('apAyuda').className='ayuda error'; return; }
+      if(!o||!o.nombre){ btn.disabled=false; btn.textContent='🎁 Unirme y sumar puntos'; $('apAyuda').textContent=(o&&o.error==='ocupado')?o.mensaje:'No se pudo registrar, intenta de nuevo.'; $('apAyuda').className='ayuda error'; return; }
       if(o.nuevaClave) guardarClave(o.nuevaClave);
       datos=o; inicio({bono:o.nuevo?o.bono:0}); setTimeout(revisarLogros,2500);
     },function(){ btn.disabled=false; btn.textContent='🎁 Unirme y sumar puntos'; aviso('Sin conexión. Intenta de nuevo.'); });
@@ -1932,8 +1939,8 @@ function leido(txt){
   if(navigator.vibrate) try{navigator.vibrate(60);}catch(e){}
   procesar(c);
 }
-var ICONOS={ok:'🎁',repetido:'⛄',expirado:'⏰',agotado:'🦌',invalido:'❓',error:'⚠️',terminado:'🔔',vacio:'📦'};
-var AVISOS={ok:'Último código',repetido:'Ese QR ya lo tenías',expirado:'Ese código ya cerró',agotado:'Ese código ya se agotó',invalido:'Ese código no es válido para la dinámica',terminado:'La posada terminó: usa tus puntos en la subasta',vacio:'Esa caja estaba vacía: ¡sigue buscando!'};
+var ICONOS={ok:'🎁',repetido:'⛄',expirado:'⏰',agotado:'🦌',invalido:'❓',error:'⚠️',terminado:'🔔',vacio:'📦',ocupado:'⏳'};
+var AVISOS={ok:'Último código',repetido:'Ese QR ya lo tenías',expirado:'Ese código ya cerró',agotado:'Ese código ya se agotó',invalido:'Ese código no es válido para la dinámica',terminado:'La posada terminó: usa tus puntos en la subasta',vacio:'Esa caja estaba vacía: ¡sigue buscando!',ocupado:'Había mucha gente: vuelve a escanear ese código'};
 function procesar(codigo){
   detenerCamara(); vista='revisando'; verEscena('leyendo');
   poner('<div class="revisando" role="status"><div class="t">Santa está revisando el QR…</div><div class="puntitos" aria-hidden="true"><i></i><i></i><i></i></div></div>');
@@ -2039,7 +2046,7 @@ function mostrarApp(m){
   if(m){ F={qr:!!m.qr,mural:!!m.mural,premios:!!m.premios,reto:!!m.reto,terminado:!!m.terminado}; modoListo=true; }
   try{ if(window.apagarSonidoTelon) window.apagarSonidoTelon(); }catch(e){}
   window.__appActiva=true;
-  ['teatro','sonido','refrescarTelon'].forEach(function(id){var el=$(id); if(el) el.style.display='none';});
+  ['teatro','sonido','refrescarTelon','versionPagina'].forEach(function(id){var el=$(id); if(el) el.style.display='none';});
   document.title='Posada Navideña'; $('appPosada').hidden=false; esferas(); dibujarNinos(); ponerLetrero('Posada Gomez 2026');
   verEscena('normal'); poner('<div class="ap-cargando">Cargando…</div>');
   llamar({api:'estado',clave:clave()},function(o){
@@ -2050,6 +2057,10 @@ function mostrarApp(m){
   setInterval(function(){ if(datos&&datos.nombre&&vista!=='qr'&&vista!=='mural'){ revisarLogros(); revisarRetoFondo(); } },30000);
 }
 $('apRefrescar').onclick=function(){ location.reload(); };
+// iPhone y iPad pausan la página cuando la app queda en segundo plano: al volver, revisar al instante
+document.addEventListener('visibilitychange',function(){ if(!document.hidden&&forzar!=='0') revisarModo(); });
+addEventListener('focus',function(){ if(forzar!=='0') revisarModo(); });
+addEventListener('pageshow',function(e){ if(e.persisted) location.reload(); });
 if(forzar==='1'){ mostrarApp(null); revisarModo(); setInterval(revisarModo,15000); }
 else if(forzar!=='0'){ revisarModo(); setInterval(revisarModo,15000); }
 addEventListener('resize',function(){ if(activa) esferas(); });
