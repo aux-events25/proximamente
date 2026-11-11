@@ -1570,13 +1570,16 @@ function registro(error){
   function enviar(){
     var a=inp.value.trim();
     if(!/^[A-Za-z0-9ÁÉÍÓÚÜÑáéíóúüñ]{4,12}$/.test(a)){ $('apAyuda').textContent='Usa de 4 a 12 letras o números, sin espacios ni símbolos.'; $('apAyuda').className='ayuda error'; inp.focus(); return; }
-    btn.disabled=true; btn.textContent='Registrando…';
-    llamar({api:'registrar',clave:clave(),nombre:a,opcion:''},function(o){
+    // pantalla de Santa anotando el apodo (la misma animación del QR)
+    vista='revisando'; verEscena('leyendo'); window.scrollTo(0,0);
+    poner('<div class="revisando" role="status"><div class="t">Santa está anotando tu apodo en su lista…</div><div class="puntitos" aria-hidden="true"><i></i><i></i><i></i></div></div>');
+    var t0=Date.now(), espera=function(fn){ setTimeout(fn,Math.max(0,1600-(Date.now()-t0))); };
+    llamar({api:'registrar',clave:clave(),nombre:a,opcion:''},function(o){ espera(function(){
       if(o&&o.confirmar){ confirmar(a,o.candidatos||[]); return; }
-      if(!o||!o.nombre){ btn.disabled=false; btn.textContent='🎁 Unirme y sumar puntos'; $('apAyuda').textContent=(o&&o.error==='ocupado')?o.mensaje:'No se pudo registrar, intenta de nuevo.'; $('apAyuda').className='ayuda error'; return; }
+      if(!o||!o.nombre){ registro((o&&o.error==='ocupado')?o.mensaje:'No se pudo registrar, intenta de nuevo.'); return; }
       if(o.nuevaClave) guardarClave(o.nuevaClave);
-      amarrarJugador(o); datos=o; inicio({bono:o.nuevo?o.bono:0}); revisarLogros();
-    },function(){ btn.disabled=false; btn.textContent='🎁 Unirme y sumar puntos'; aviso('Sin conexión. Intenta de nuevo.'); });
+      amarrarJugador(o); datos=o; verEscena('normal'); inicio({bono:o.nuevo?o.bono:0}); revisarLogros();
+    }); },function(){ espera(function(){ registro('Sin conexión. Revisa tu internet e intenta de nuevo.'); }); });
   }
   btn.onclick=enviar; inp.onkeydown=function(e){if(e.key==='Enter')enviar();};
 }
