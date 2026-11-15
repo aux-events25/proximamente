@@ -1717,16 +1717,17 @@ function lgGuardar(o){ try{ localStorage.setItem('posada_logros',JSON.stringify(
 function avatarPropio(){ try{ var a=localStorage.getItem('posada_avatar'); return !!a && JSON.parse(a).p!=='usuario'; }catch(e){ return false; } }
 function fotosLocales(){ try{ return Number(localStorage.getItem('posada_fotos'))||0; }catch(e){ return 0; } }
 function subidaMural(){ try{ localStorage.setItem('posada_fotos',String(fotosLocales()+1)); }catch(e){} revisarLogros(); }
-function contarFotos(apodo,listo){
-  if(!apodo){ listo(0); return; }
-  fetch(SB_MURAL.url+'/rest/v1/mural_fotos?select=id&nombre=ilike.'+encodeURIComponent(apodo),{headers:{apikey:SB_MURAL.key}})
+function contarFotos(apodo,desde,listo){
+  // solo cuenta fotos con su apodo, visibles y subidas DESPUÉS de que se registró (no las de pruebas ni de otros días)
+  if(!apodo||!desde){ listo(null); return; }
+  fetch(SB_MURAL.url+'/rest/v1/mural_fotos?select=id&oculto=eq.false&created_at=gte.'+encodeURIComponent(desde)+'&nombre=ilike.'+encodeURIComponent(apodo),{headers:{apikey:SB_MURAL.key}})
     .then(function(r){return r.ok?r.json():[];}).then(function(f){ listo(Array.isArray(f)?f.length:0); }).catch(function(){ listo(null); });
 }
 function revisarLogros(){
   if(!datos||!datos.nombre) return;
   llamar({api:'logros',clave:clave()},function(o){
     if(!o||!o.registrado) return;
-    contarFotos(o.apodo||datos.nombre,function(fotos){
+    contarFotos(o.apodo||datos.nombre,o.desde,function(fotos){
       var prev=LG.progreso.fotografo||0;
       var p={dentro:1,coleccionista:o.codigos||0,fotografo:Math.max(fotos==null?prev:fotos,fotosLocales()),infiltrado:o.secreto?1:0,mision:o.mision?1:0,
              estilista:avatarPropio()?1:0,jugador:Number(o.ganados)||0,magnate:o.magnate?1:0};
