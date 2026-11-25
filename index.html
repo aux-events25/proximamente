@@ -2510,9 +2510,14 @@ addEventListener('resize',function(){ if(activa) esferas(); });
 #fondoPosada .f-feliz{position:relative;z-index:1;margin:1vh 0 0;font-family:"Mountains of Christmas","Luckiest Guy",serif;font-weight:700;font-size:clamp(34px,6vh,72px);
   color:#fff;text-shadow:0 4px 0 #9a0b22,0 0 24px rgba(242,193,78,.35)}
 #fondoPosada.raton #fondoVolver,#fondoVolver:focus-visible{opacity:1}
-#fondoPosada{z-index:2147480000}
-#fondoPosada .f-feliz{text-align:center;padding:0 4vw}
-@media (max-aspect-ratio:3/4){ #fondoPosada #fEscena{width:100vw;max-width:none;margin-top:0} #fondoPosada .f-feliz{font-size:clamp(40px,11vw,64px);margin-top:2vh} }
+/* dentro del escenario del telón: el telón, las butacas y los nombres se quedan; solo cambia lo de atrás.
+   El fondo verde cubre TODO el espacio detrás del telón (nada negro). */
+#escenaPosada{left:0;top:0;width:100%;height:100%;transform:none;overflow:hidden}
+#escenaPosada #fondoPosada{position:absolute;inset:0;z-index:0;display:flex;justify-content:flex-start;padding-top:calc(var(--top) + var(--h) * .03)}
+#escenaPosada #fondoPosada .f-esferas{height:auto}
+#escenaPosada #fEscena{width:calc(var(--w) * .94);max-width:none;margin-top:calc(var(--h) * .05)}
+#escenaPosada .f-feliz{text-align:center;padding:0 4%;font-size:calc(var(--w) * .075);margin-top:calc(var(--h) * .01)}
+@media (max-aspect-ratio:3/4){ #escenaPosada #fEscena{width:calc(var(--w) * .66);margin-top:calc(var(--h) * .13)} #escenaPosada .f-feliz{font-size:calc(var(--w) * .08)} }
 </style>
 <div id="fondoPosada" aria-label="Fondo de Posada Gómez">
   <!-- Letrero del Polo Norte (se reutiliza en todas las escenas) -->
@@ -2659,12 +2664,20 @@ addEventListener('resize',function(){ if(activa) esferas(); });
       h+='<g class="f-esf" style="transform-origin:'+x+'px 0px;animation-delay:-'+(i*0.4)+'s"><line x1="'+x+'" y1="0" x2="'+x+'" y2="'+(L+2)+'" stroke="#f2c14e" stroke-width="1.5"/><rect x="'+(x-5)+'" y="'+L+'" width="10" height="9" rx="2" fill="#d4a63a"/><circle cx="'+x+'" cy="'+cy+'" r="'+r+'" fill="'+c+'"/><ellipse cx="'+(x-r*.35)+'" cy="'+(cy-r*.35)+'" rx="'+(r*.3)+'" ry="'+(r*.2)+'" fill="#fff" opacity=".5"/></g>'; }
     svg.innerHTML=h; }
   function nieve(){ if(hechas) return; hechas=true;
-    for(var i=0;i<45;i++){ var d=document.createElement('div'); d.className='f-copo'; d.textContent=Math.random()<.4?'❄':'•'; d.style.left=Math.random()*100+'vw';
+    for(var i=0;i<45;i++){ var d=document.createElement('div'); d.className='f-copo'; d.textContent=Math.random()<.4?'❄':'•'; d.style.left=Math.random()*100+'%';
       d.style.fontSize=(8+Math.random()*16)+'px'; d.style.setProperty('--dx',(Math.random()*80-40)+'px'); d.style.animationDuration=(9+Math.random()*9)+'s'; d.style.animationDelay=-(Math.random()*18)+'s'; fondo.appendChild(d); } }
+  var montado=false;
+  function montar(){
+    if (montado) return; montado=true;
+    var sil=document.getElementById('silueta'), luz=document.getElementById('luz');
+    var cont=document.createElement('div'); cont.className='escenario'; cont.id='escenaPosada';
+    sil.parentNode.insertBefore(cont, sil); cont.appendChild(fondo); fondo.classList.add('on');
+    sil.style.display='none'; if (luz) luz.style.display='none';
+    esferas(); nieve();
+  }
   function revisar(){
     var mostrar = esDia && !window.__appActiva && q.get('app') !== '1';
-    if (mostrar && !fondo.classList.contains('on')) { fondo.classList.add('on'); esferas(); nieve(); try { if (window.apagarSonidoTelon) window.apagarSonidoTelon(); } catch (e) {} }
-    if (!mostrar) fondo.classList.remove('on');
+    if (mostrar) montar();
   }
   revisar(); setInterval(revisar, 1500); addEventListener('resize', function(){ if (fondo.classList.contains('on')) esferas(); });
 })();
