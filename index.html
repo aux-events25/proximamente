@@ -1436,7 +1436,11 @@ requestAnimationFrame(cuadro);
 (function(){
 var API='https://script.google.com/macros/s/AKfycbz3BdSkfxvH9OzpXBI4hdP0D5GQu6DWrOJOsajLLxBc3F9gvqqaVgL_Pq5Nra9zPg1s/exec';
 var modoListo=false, LLAVE='posada_jugador', activa=false, datos=null, vista='', F={qr:false,mural:false,premios:false,reto:false,tarjeta:false,terminado:false};
+/* APP DIRECTA: true = abre la app al instante, sin telón y sin esperar al servidor (desde el día de la posada).
+   Para volver a mostrar el telón, cambia a false. Con ?app=0 en el link siempre se ve el telón. */
+var APP_DIRECTA=true;
 var forzar=new URLSearchParams(location.search).get('app');
+if(forzar===null&&APP_DIRECTA) forzar='1';
 var GORRO='<svg viewBox="0 0 120 80" aria-hidden="true"><path d="M10 62 C16 26 52 4 88 8 C108 11 118 26 116 46 L102 50 C98 36 90 30 80 31 C90 44 96 54 98 62 Z" fill="#c8102e"/><rect x="2" y="56" width="100" height="22" rx="11" fill="#fff"/><circle cx="110" cy="48" r="11" fill="#fff"/></svg>';
 function $(i){return document.getElementById(i);}
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -1578,7 +1582,7 @@ function registro(error){
       if(o&&o.confirmar){ confirmar(a,o.candidatos||[]); return; }
       if(!o||!o.nombre){ registro((o&&o.error==='ocupado')?o.mensaje:'No se pudo registrar, intenta de nuevo.'); return; }
       if(o.nuevaClave) guardarClave(o.nuevaClave);
-      amarrarJugador(o); datos=o; verEscena('normal'); inicio({bono:o.nuevo?o.bono:0}); revisarLogros();
+      amarrarJugador(o); datos=o; guardarEstado(o); verEscena('normal'); inicio({bono:o.nuevo?o.bono:0}); revisarLogros();
     }); },function(){ espera(function(){ registro('Sin conexión. Revisa tu internet e intenta de nuevo.'); }); });
   }
   btn.onclick=enviar; inp.onkeydown=function(e){if(e.key==='Enter')enviar();};
@@ -2290,12 +2294,13 @@ function cargarPremios(){
 
 /* ---------- Actualización en tiempo real ---------- */
 var canjesVistos=null;
+function guardarEstado(o){ try{ localStorage.setItem('posada_estado',JSON.stringify({clave:clave(),o:o})); }catch(e){} }
 function actualizar(){
   llamar({api:'estado',clave:clave()},function(o){
     if(o&&!o.nombre&&!o.error&&!o.tipo&&datos&&datos.nombre){ limpiarLocal(); try{ localStorage.removeItem('posada_dueno'); }catch(e){} datos=null; registro(); return; }
     if(!o||!o.nombre) return;
     var antes=Number((datos||{}).total||0), nuevos=Number(o.canjes||0), cambio=antes!==Number(o.total||0)||Number((datos||{}).ganados||0)!==Number(o.ganados||0)||nuevos!==canjesVistos;
-    datos=Object.assign(datos||{},o);
+    datos=Object.assign(datos||{},o); guardarEstado(datos);
     if(cambio) revisarLogros();
     if($('apTarjeta')) tarjetaPuntos(o);
     if(canjesVistos!==null&&nuevos>canjesVistos){
@@ -2312,11 +2317,12 @@ function revisarModo(){
       var r0=null; try{ r0=localStorage.getItem('posada_reinicio'); }catch(e){}
       if(r0===null){ try{ localStorage.setItem('posada_reinicio',o.reinicio||''); }catch(e){} }
       else if(r0!==(o.reinicio||'')){
-        try{ ['posada_logros','posada_logros_pts','posada_avatar','posada_fotos','posada_jugador','posada_dueno'].forEach(function(k){ localStorage.removeItem(k); });
+        try{ ['posada_logros','posada_logros_pts','posada_avatar','posada_fotos','posada_jugador','posada_dueno','posada_estado'].forEach(function(k){ localStorage.removeItem(k); });
              document.cookie='posada_jugador=; max-age=0; path=/'; localStorage.setItem('posada_reinicio',o.reinicio||''); }catch(e){}
         location.reload(); return;
       }
     }
+    try{ localStorage.setItem('posada_modo',JSON.stringify({qr:!!o.qr,mural:!!o.mural,premios:!!o.premios,reto:!!o.reto,tarjeta:!!o.tarjeta,terminado:!!o.terminado})); }catch(e){}
     if(!activa){ if(o.app) mostrarApp(o); return; }
     if(o.app===false&&forzar!=='1'){ location.reload(); return; }
     var nuevos=['qr','mural','premios','reto','tarjeta'].filter(function(k){return !!o[k]&&!F[k];});
@@ -2337,10 +2343,16 @@ function mostrarApp(m){
   window.__appActiva=true;
   ['teatro','sonido','refrescarTelon','versionPagina'].forEach(function(id){var el=$(id); if(el) el.style.display='none';});
   document.title='Posada Navideña'; $('appPosada').hidden=false; esferas(); dibujarNinos(); ponerLetrero('Posada Gomez 2026');
-  verEscena('normal'); poner('<div class="ap-cargando">Cargando…</div>');
+  verEscena('normal');
+  // Arranque rápido: usa la última copia guardada en el celular mientras llega la respuesta del servidor
+  var cacheE=null, cacheM=null; try{ cacheE=JSON.parse(localStorage.getItem('posada_estado')||'null'); cacheM=JSON.parse(localStorage.getItem('posada_modo')||'null'); }catch(e){}
+  if(!m&&cacheM){ F=cacheM; modoListo=true; }
+  var rapido=!!(cacheE&&cacheE.clave===clave()&&cacheE.o&&cacheE.o.nombre);
+  if(rapido){ datos=cacheE.o; canjesVistos=Number(datos.canjes||0); if(datos.evento) ponerLetrero(datos.evento); inicio({}); }
+  else poner('<div class="ap-cargando">Cargando…</div>');
   llamar({api:'estado',clave:clave()},function(o){
     if(o&&o.evento){ ponerLetrero(o.evento); }
-    if(o&&o.nombre){ amarrarJugador(o); datos=o; canjesVistos=Number(o.canjes||0); inicio({}); revisarLogros(); } else { limpiarLocal(); try{ localStorage.removeItem('posada_dueno'); }catch(e){} registro(); }
+    if(o&&o.nombre){ guardarEstado(o); amarrarJugador(o); datos=o; guardarEstado(o); canjesVistos=Number(o.canjes||0); if(!rapido||vista==='inicio') inicio({}); else if($('apPts')) $('apPts').textContent=fmt(o.total); revisarLogros(); } else { limpiarLocal(); try{ localStorage.removeItem('posada_dueno'); localStorage.removeItem('posada_estado'); }catch(e){} registro(); }
   },function(){ registro(); });
   setInterval(function(){ if(datos&&datos.nombre&&!document.hidden&&vista!=='qr'&&vista!=='mural'&&!$('apTarjeta')) actualizar(); },8000);
   setInterval(function(){ if(datos&&datos.nombre&&!document.hidden) revisarRetoFondo(); },10000);
